@@ -1,0 +1,503 @@
+<html>
+
+<!--
+
+Hello Developer! Looking to integrate with StockStream?
+
+The portfolio will be published every 5 minutes to this SNS Topic:
+
+arn:aws:sns:us-west-2:534605677915:StockStreamAssets
+
+Pull based apis are also available at:
+
+http://stockstream-data.s3-website-us-west-2.amazonaws.com/portfolio
+http://stockstream-data.s3-website-us-west-2.amazonaws.com/topScores
+
+TOS:
+If you use the aforementioned information, please display a visible link to one of the following:
+
+http://stockstream.live
+https://twitter.com/stockstreamlive
+https://www.twitch.tv/stockstream
+https://stocktwits.com/stockstream
+https://discord.gg/xnrKgEj
+
+-->
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <script type="text/javascript" src="http://ajax.aspnetcdn.com/ajax/jquery/jquery-2.1.4.min.js"></script>
+    <link rel="icon" href="/cashmeoutside.png" />
+    <style>
+        html {
+            font-family: 'Press Start 2P';
+        }
+
+        h1 {
+            color: white;
+			line-height: 1.5;
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+            text-shadow:
+				-4px -4px 0 #1b2840,
+				1px -1px 0 #1b2840,
+				-1px 1px 0 #1b2840,
+				1px 1px 0 #1b2840;
+            filter: drop-shadow(0px 0px 5px #ff0ba8);
+        }
+
+        body {
+            background-color: black;
+        }
+
+        .footer {
+            color: white;
+            width: 99%;
+            font-size: .6em;
+			line-height: 1.5;
+        }
+
+        .twitch_link {
+            padding: 2px 0px 4px;
+            display: block;
+            margin-top: 25px;
+            font-weight:normal;
+            font-size: 1em;
+            text-decoration:underline;
+            color: white;
+			line-height: 1.5;
+        }
+
+        .faq {
+            color: white;
+			line-height: 2.5;
+        }
+
+        hr {
+            border: 0;
+            height: 1px;
+            margin: 15px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 11, 168, 0.75), rgba(255, 255, 255, 0));
+        }
+
+        .thin {
+            border: 0;
+            width: 50%;
+            height: 1px;
+            margin: 25px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 11, 168, 0.75), rgba(255, 255, 255, 0));
+        }
+
+        .question {
+            filter: drop-shadow(0px 0px 1px white);
+            text-shadow: -2px 0 black, 0 2px black, 2px 0 black, 0 -2px black;
+            color: #73054c;
+            font-size: 1.9em;
+        }
+
+        .answer {
+            font-size: 1.3em;
+        }
+
+        .powered {
+            color: white;
+			line-height: 2.5;
+            font-size: .9em;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        a:visited {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+            filter: drop-shadow(0px 0px 5px #ffffff);
+        }
+
+        .robinhood {
+            color: #00d097;
+        }
+
+        .robinhood:visited {
+            color: #00d097;
+        }
+
+        .stocktwits {
+            color: #5e80a2;
+        }
+
+        .stocktwits:visited {
+            color: #5e80a2;
+        }
+
+        .scores {
+            color: yellow;
+        }
+
+        .scores:visited {
+            color: yellow;
+        }
+
+        .streamlabs {
+            color: #1eb4ff;
+        }
+
+        .streamlabs:visited {
+            color: #1eb4ff;
+        }
+
+        .twitch {
+            color: #6441A4;
+        }
+
+        .twitch:visited {
+            color: #6441A4;
+        }
+
+        .daytrading {
+            color: #fa5311;
+        }
+
+        .daytrading:visited {
+            color: #fa5311;
+        }
+
+        .newsapi {
+            color: #5cc7b2;
+        }
+
+        .newsapi:visited {
+            color: #5cc7b2;
+        }
+
+        .music {
+            color: maroon;
+        }
+
+        .music:visited {
+            color: maroon;
+        }
+
+        .portfolio {
+            color: #00d097;
+        }
+
+        .portfolio:visited {
+            color: #00d097;
+        }
+
+        .me {
+            color: cyan;
+        }
+
+        .me:visited {
+            color: cyan;
+        }
+
+        .follow {
+            overflow: hidden;
+            height: 90px;
+            margin: 10px;
+            border-style: none;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            transition: all .05s ease;
+        }
+
+        .follow:hover {
+            transform: scale(1.2);
+        }
+
+        #cheddarlogo {
+            filter: drop-shadow(0px 0px 15px #ff0ba8);
+        }
+
+        #cheddarlogo:hover {
+            filter: drop-shadow(0px 0px 25px #ff0ba8);
+        }
+
+        #twitchlogo {
+            filter: drop-shadow(0px 0px 15px #6441A4);
+        }
+
+        #twitchlogo:hover {
+            filter: drop-shadow(0px 0px 25px #6441A4);
+        }
+
+        #robinhoodlogo {
+            filter: drop-shadow(0px 0px 15px #00d097);
+        }
+
+        #robinhoodlogo:hover {
+            filter: drop-shadow(0px 0px 25px #00d097);
+        }
+
+        #portfoliologo {
+            filter: drop-shadow(0px 0px 15px #00d097);
+        }
+
+        #portfoliologo:hover {
+            filter: drop-shadow(0px 0px 25px #00d097);
+        }
+
+        #stocktwitslogo {
+            filter: drop-shadow(0px 0px 15px #3f5770);
+        }
+
+        #stocktwitslogo:hover {
+            filter: drop-shadow(0px 0px 25px #3f5770);
+        }
+
+        #twitterlogo {
+            filter: drop-shadow(0px 0px 15px #1da1f2);
+        }
+
+        #twitterlogo:hover {
+            filter: drop-shadow(0px 0px 25px #1da1f2);
+        }
+
+        #scoreslogo {
+            filter: drop-shadow(0px 0px 15px yellow);
+        }
+
+        #scoreslogo:hover {
+            filter: drop-shadow(0px 0px 25px yellow);
+        }
+
+        #merchlogo {
+            filter: drop-shadow(0px 0px 15px white);
+        }
+
+        #merchlogo:hover {
+            filter: drop-shadow(0px 0px 25px white);
+        }
+
+        #discordlogo {
+            filter: drop-shadow(0px 0px 15px #7289da);
+        }
+
+        #discordlogo:hover {
+            filter: drop-shadow(0px 0px 25px #7289da);
+        }
+
+        #ponyexpress {
+            color: #ff69b4;
+        }
+
+        .stockstream {
+            color: #ff0ba8;
+        }
+
+        .stockstream:hover {
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+            filter: drop-shadow(0px 0px 5px #ffffff);
+        }
+
+        .cheddar {
+            color: #ff0ba8;
+        }
+
+        .announce {
+            color: white;
+			line-height: 2.5;
+			font-size: 1.3em;
+			margin-top: 25px;
+			margin-bottom: 50px;
+			width: 75%;
+        }
+
+        #breaking {
+            display: inline;
+        }
+
+        .container {
+            margin-top: 80px;
+            margin-bottom: 80px;
+            white-space: nowrap;
+            display: inline-block;
+        }
+
+        .chat {
+            box-shadow: 0px 0px 100px #ff0ba8;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .player {
+            box-shadow: 0px 0px 100px #ff0ba8;
+            display: inline-block;
+        }
+
+    </style>
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-97008666-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+    <title>Cheddar StockStream - Worlds First Multiplayer Stock Market Game Using Real Money</title>
+</head>
+<body>
+<br>
+<br>
+
+<center>
+    <h1>Cheddar StockStream - Worlds First Multiplayer Stock Market Game Using Real Money</h1>
+
+    <div class="container">
+        <iframe class="player"
+                src="https://player.twitch.tv/?channel=stockstream"
+                frameborder="0"
+                allowfullscreen="true"
+                scrolling="no"
+                height="509"
+                width="900">
+        </iframe>
+
+        <iframe frameborder="0"
+                scrolling="no"
+                class="chat"
+                id="chat_embed"
+                src="https://www.twitch.tv/stockstream/chat?darkpopout"
+                height="509"
+                width="350">
+        </iframe>
+    </div>
+
+    <br>
+    <br>
+
+    <table>
+
+        <tr>
+            <td><a href="/portfolio.html"><img id="portfoliologo" class="follow" src="/plaque-portfolio.png"/></a></td>
+            <td><a href="/scores.html"><img id="scoreslogo" class="follow" src="/plaque-scores.png"/></a></td>
+            <td><a href="https://twitch.tv/stockstream"><img id="twitchlogo" class="follow" src="/plaque-twitch.png"/></a></td>
+            <td><a href="https://twitter.com/stockstream"><img id="twitterlogo" class="follow" src="/plaque-twitter.png"/></a></td>
+        </tr>
+
+        <br>
+        <br>
+
+        <tr>
+            <td><a href="https://stocktwits.com/stockstream"><img id="stocktwitslogo" class="follow" src="/plaque-stocktwits.png"/></a></td>
+            <td><a href="https://discord.gg/xnrKgEj"><img id="discordlogo" class="follow" src="/plaque-discord.png"/></a></td>
+            <td><a href="https://cheddar.com"><img id="cheddarlogo" class="follow" src="/plaque-cheddar.png"/></a></td>
+            <td><a href="https://robinhood.com/referral/michaer74/"><img id="robinhoodlogo" class="follow" src="/plaque-robinhood.png"/></a></td>
+        </tr>
+
+    </table>
+
+    <br>
+    <br>
+
+    <hr>
+    <h1>FAQ</h1>
+    <hr>
+    <div class="faq">
+        <b><span class="question">What is this?</span></b>
+        <br>
+        <b><span class="answer">
+            <a class="stockstream" href="https://www.twitch.tv/stockstream">Cheddar StockStream</a>
+            is the worlds first cooperative multiplayer stock market game using real money.
+        </span></b>
+        <br>
+        <hr class="thin">
+
+        <b><span class="question">Is this really using real money?</span></b>
+        <br>
+        <b><span class="answer">
+            Yes. Anyone can vote in the
+            <a class="stockstream" href="https://www.twitch.tv/stockstream">Cheddar StockStream</a>
+            Twitch Channel on which stocks should be bought or sold.
+            Trades are executed automatically using <a href="https://robinhood.com/" class="robinhood">Robinhood</a>.
+        </span></b>
+        <br>
+        <hr class="thin">
+
+        <b><span class="question">How much money is available?</span></b>
+        <br>
+        <b><span class="answer">
+            The account started with $50,000 in cash. Since then, thousands of players have voted and built a
+            <a class="portfolio" href="/portfolio.html">portfolio</a> with many different stocks.
+        </span></b>
+        <br>
+        <hr class="thin">
+
+        <b><span class="question">How do I play?</span></b>
+        <br>
+        <b><span class="answer">
+            Visit the <a class="stockstream" href="https://www.twitch.tv/stockstream">Cheddar StockStream</a> Twitch channel and see the HowTo below the video.
+        </span></b>
+        <br>
+        <hr class="thin">
+
+        <b><span class="question">What stocks can be bought or sold?</span></b>
+        <br>
+        <b><span class="answer">
+            Everything on <a href="https://robinhood.com/" class="robinhood">Robinhood</a> except for a few restrictions due to
+            <a class="daytrading" href="https://support.robinhood.com/hc/en-us/articles/207677966-Robinhood-Instant">volatility</a>
+            or FINRA/SEC regulations.
+        </span></b>
+        <br>
+        <hr class="thin">
+
+        <b><span class="question">How long will this continue?</span></b>
+        <br>
+        <b><span class="answer">
+            This stream will run every day, while market is open. If the account value falls below
+            <a class="daytrading" href="https://support.robinhood.com/hc/en-us/articles/217072366-Pattern-Day-Trading">$25,000</a>,
+            trading halts, and the game is over.
+        </span></b>
+        <br>
+
+    </div>
+</center>
+<br>
+<br>
+<hr>
+<center><a href="http://www.linkedin.com/in/Mike--Roberts" class="me">Created By Mike Roberts</a></center>
+<hr>
+<br>
+<br>
+<br>
+<center>
+<div class="powered">
+    Cheddar StockStream is powered by
+    <a class="newsapi" href="https://newsapi.org/">NewsAPI.org</a>
+    <a class="music" href="https://publicdomainproject.org/">publicdomainproject.org</a>
+    <a class="twitch" href="http://music.twitch.tv/">music.twitch.tv</a>
+    <a class="robinhood" href="https://robinhood.com/">Robinhood</a>
+    <a class="stocktwits" href="https://stocktwits.com/">StockTwits</a>
+    <a class="streamlabs" href="https://streamlabs.com/">Streamlabs</a>
+    and
+    <a class="obs" href="https://obsproject.com/">OBS Studio</a>
+</div>
+</center>
+<br>
+
+<br>
+
+<div class="footer">
+    <center>
+        Content made available through this website or its related channels is for entertainment purposes only and is not intended to and does not constitute legal advice or investment advice.
+        This service is made available in the hope that it will be useful, but without any warranty.
+        YOUR USE OF THE INFORMATION OR SERVICES ON THIS WEBSITE OR USE OF THE MATERIALS LINKED BY THIS WEBSITE IS AT YOUR OWN RISK!
+        <br><br>
+
+        Got something important to tell me?
+        <span id="ponyexpress">root<span style="display:none">please don't spam me</span>@stockstream.live</span></b></center>
+    <br>
+</div>
+
+</body>
+</html>

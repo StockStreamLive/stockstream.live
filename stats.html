@@ -1,0 +1,494 @@
+<html>
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.28.14/js/jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/floatthead/2.0.3/jquery.floatThead.min.js"></script>
+    <script type="text/javascript" src="https://sdk.amazonaws.com/js/aws-sdk-2.77.0.min.js"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" rel="stylesheet">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.js"></script>
+
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P" rel="stylesheet">
+    <link rel="icon" href="/cashmeoutside.png" />
+    <style>
+        html {
+            font-family: 'Press Start 2P';
+            color: #cccccc;
+        }
+
+        h1 {
+            color: white;
+            text-shadow:
+				-4px -4px 0 #007857,
+				1px -1px 0 #007857,
+				-1px 1px 0 #007857,
+				1px 1px 0 #007857;
+        }
+
+        h2 {
+            color: white;
+            text-shadow:
+				-4px -4px 0 #007857,
+				1px -1px 0 #007857,
+				-1px 1px 0 #007857,
+				1px 1px 0 #007857;
+        }
+
+        body {
+            background-color: black;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        table td{
+            border: 1px dotted #ffffff;
+            padding: 4px;
+            text-align: center;
+            font-size: 1em;
+        }
+
+        table tr:hover {
+            background: #353535;
+        }
+
+        table th{
+            border: 1px dotted #ffffff;
+            padding: 5px;
+            cursor: pointer; cursor: hand;
+            font-size: 1.2em;
+            background: black;
+        }
+
+        table th:hover {
+            color: cyan;
+            border: 1px solid #ffffff;
+            padding: .1em;
+            padding: 5px;
+            cursor: pointer; cursor: hand;
+            font-size: 1.2em;
+        }
+
+        .symbol a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .symbol a:hover {
+            color: 007857;
+            text-decoration: underline;
+        }
+
+        .balance {
+            color: #cccccc;
+            margin-top: 100px;
+            font-size: 1.8em;
+            display: inline;
+        }
+
+        .scoreValue {
+            display: inline;
+        }
+
+        .increase {
+            color: #00d097;
+        }
+
+        .decrease {
+            color: #fa5311;
+        }
+
+        .home {
+            height: 100px;
+            filter: drop-shadow(0px 0px 150px #7289da);
+        }
+
+        .home:hover {
+            filter: drop-shadow(0px 0px 25px #7289da);
+        }
+
+        hr {
+            border: 0;
+            width: 50%;
+            height: 2px;
+            margin: 15px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 11, 168, 0.75), rgba(255, 255, 255, 0));
+        }
+
+    </style>
+    <script>
+        AWS.config.region = 'us-west-2';
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({ IdentityPoolId: 'us-west-2:d32c747b-f83b-4b2b-ad74-46b912406dae', });
+
+        var awsLambda = new AWS.Lambda({region: 'us-west-2', apiVersion: '2015-03-31'});
+        var lambdaParams = {
+            FunctionName : 'load_vote_data_prod',
+            InvocationType : 'RequestResponse',
+            LogType : 'None'
+        };
+
+        function getToday() {
+            var today = new Date();
+            var dd = today.getDate();
+            var mm = today.getMonth()+1; //January is 0!
+            var yyyy = today.getFullYear();
+
+            if(dd<10) {
+                dd = '0'+dd
+            }
+
+            if(mm<10) {
+                mm = '0'+mm
+            }
+
+            today = mm + '/' + dd + '/' + yyyy;
+            return today;
+        }
+
+        function getLastTradePrice(quote) {
+            var lastTradeKey = quote['last_extended_hours_trade_price'] != null ? 'last_extended_hours_trade_price' : 'last_trade_price';
+            var lastPrice = parseFloat(quote[lastTradeKey]);
+            return lastPrice;
+        }
+
+        function createRow(key, value) {
+            var rowTr = $('<tr>');
+            rowTr.append($('<td>', { html:  key, }));
+            rowTr.append($('<td>', { html:  value, }));
+            return rowTr;
+        }
+
+        function getSymbolToQuote(quotes) {
+            var quoteMap = {}
+            for (var i = 0; i < quotes.length; ++i) {
+                quoteMap[quotes[i]['symbol']] = quotes[i];
+            }
+
+            return quoteMap;
+        }
+
+        function getSymbolToAggregateStats(voteRecords) {
+            var symbolToStats = {}
+            for (var i = 0; i < voteRecords.length; ++i) {
+                var record = voteRecords[i];
+
+                if (record['platform_username'].toLowerCase() === "stockstream") {
+                    continue;
+                }
+
+                var symbol = record['parameter'];
+                var action = record['action'];
+                if (!symbolToStats.hasOwnProperty(symbol)) {
+                    symbolToStats[symbol] = {
+                        'BUY' : 0,
+                        'SELL' : 0,
+                    }
+                }
+                symbolToStats[symbol][action]++;
+            }
+
+            return symbolToStats;
+        }
+
+        function getWinningRounds(voteRecords) {
+            var symbolToPlay = {}
+            for (var i = 0; i < voteRecords.length; ++i) {
+                var record = voteRecords[i];
+
+                if (record['platform_username'].toLowerCase() !== "stockstream") {
+                    continue;
+                }
+
+                var symbol = record['parameter'];
+                var action = record['action'];
+                if (!symbolToPlay.hasOwnProperty(symbol)) {
+                    symbolToPlay[symbol] = {
+                        'BUY' : 0,
+                        'SELL' : 0,
+                    }
+                }
+                symbolToPlay[symbol][action]++;
+            }
+
+            return symbolToPlay;
+        }
+
+
+        function buildStatsTable(statsMap, quoteMap) {
+
+            for (var key in statsMap) {
+                var symbol = key;
+
+                var stats = statsMap[symbol];
+                var quote = quoteMap[symbol];
+
+                var buyVotes = stats['BUY'];
+                var sellVotes = stats['SELL'];
+                var totalVotes = buyVotes + sellVotes;
+
+                var lastPrice = getLastTradePrice(quote);
+                var lastClose = quote['previous_close'];
+
+                var change = lastPrice - lastClose;
+                var percentChange = change / lastPrice * 100;
+
+                var isDecrease = percentChange < 0;
+                var changeClass = isDecrease ? "decrease" : "increase";
+                var changeOperator = isDecrease ? "-" : "+";
+
+                var assetTr = $('<tr>');
+                assetTr.append($('<td>', {
+                                    class: "symbol ",
+                                    html:  "<a target=\"_blank\" href='https://finance.yahoo.com/quote/" + symbol.replace(/\./g , "-") + "'>" + symbol + "</a>",
+                                 }));
+                assetTr.append($('<td>', {
+                                    class: "change " + changeClass,
+                                    html:  percentChange.toFixed(2) + "%",
+                                 }));
+
+                assetTr.append($('<td>', {
+                                    class: "buys ",
+                                    html:  buyVotes,
+                                 }));
+                assetTr.append($('<td>', {
+                                    class: "sells ",
+                                    html:  sellVotes,
+                                 }));
+                assetTr.append($('<td>', {
+                                    class: "totals ",
+                                    html:  totalVotes,
+                                 }));
+
+                $("#statsBody").append(assetTr);
+            }
+
+            $("#stats").tablesorter();
+            $("#stats").trigger("update");
+            var $table = $('#stats');
+            $table.floatThead();
+        }
+
+        function buildPlaysTable(playsMap, quoteMap) {
+
+            for (var key in playsMap) {
+
+                var symbol = key;
+
+                var stats = playsMap[symbol];
+                var quote = quoteMap[symbol];
+
+                var buyVotes = stats['BUY'];
+                var sellVotes = stats['SELL'];
+                var totalVotes = buyVotes + sellVotes;
+
+                var lastPrice = getLastTradePrice(quote);
+                var lastClose = quote['previous_close'];
+
+                var change = lastPrice - lastClose;
+                var percentChange = change / lastPrice * 100;
+
+                var isDecrease = percentChange < 0;
+                var changeClass = isDecrease ? "decrease" : "increase";
+                var changeOperator = isDecrease ? "-" : "+";
+
+                var assetTr = $('<tr>');
+                assetTr.append($('<td>', {
+                                    class: "symbol ",
+                                    html:  "<a target=\"_blank\" href='https://finance.yahoo.com/quote/" + symbol.replace(/\./g , "-") + "'>" + symbol + "</a>",
+                                 }));
+                assetTr.append($('<td>', {
+                                    class: "change " + changeClass,
+                                    html:  percentChange.toFixed(2) + "%",
+                                 }));
+
+                assetTr.append($('<td>', {
+                                    class: "buys ",
+                                    html:  buyVotes,
+                                 }));
+                assetTr.append($('<td>', {
+                                    class: "sells ",
+                                    html:  sellVotes,
+                                 }));
+                assetTr.append($('<td>', {
+                                    class: "totals ",
+                                    html:  totalVotes,
+                                 }));
+                $("#playsBody").append(assetTr);
+            }
+
+            $("#plays").tablesorter();
+            $("#plays").trigger("update");
+            var $table = $('#plays');
+            $table.floatThead();
+        }
+
+        function buildOverview(winningPlays, aggregateStats) {
+
+
+            var totalBuys = 0;
+            var totalSells = 0;
+            for (var key in winningPlays) {
+                var stats = winningPlays[key];
+                totalBuys += stats['BUY'];
+                totalSells += stats['SELL'];
+            }
+            var totalTrades = totalBuys + totalSells;
+
+            var buyVotes = 0;
+            var sellVotes = 0;
+            for (var key in aggregateStats) {
+                var stats = aggregateStats[key];
+
+                buyVotes += stats['BUY'];
+                sellVotes += stats['SELL'];
+            }
+            var totalVotes = buyVotes + sellVotes;
+
+
+            $("#overviewBody").append(createRow("Total Buys", totalBuys));
+            $("#overviewBody").append(createRow("Total Sells", totalSells));
+            $("#overviewBody").append(createRow("Total Trades", totalTrades));
+            $("#overviewBody").append(createRow("Buy Votes", buyVotes));
+            $("#overviewBody").append(createRow("Sell Votes", sellVotes));
+            $("#overviewBody").append(createRow("Total Votes", totalVotes));
+        }
+
+
+        function constructPage(voteRecords, quotes) {
+            var quoteMap = getSymbolToQuote(quotes);
+            var aggregateStats = getSymbolToAggregateStats(voteRecords);
+            var winningPlays = getWinningRounds(voteRecords);
+
+            buildOverview(winningPlays, aggregateStats);
+            buildPlaysTable(winningPlays, quoteMap);
+            buildStatsTable(aggregateStats, quoteMap);
+        }
+
+        function getQuotes(voteRecords, symbols) {
+            var symbolString = symbols.join(",");
+
+            $.get('https://api.robinhood.com/quotes/?symbols=' + symbolString, function(quotes) {
+                constructPage(voteRecords, quotes['results']);
+            });
+        }
+
+        function findAllSymbols(voteRecords) {
+            var symbols = [];
+            for (var i = 0; i < voteRecords.length; ++i) {
+                symbols.push(voteRecords[i]['parameter']);
+            }
+            return symbols;
+        }
+
+        function refreshData() {
+            var date = $('#datepicker').val();
+            var payload = {
+                "date" : date,
+            };
+
+            lambdaParams['Payload'] = JSON.stringify(payload);
+
+            $("#statsBody tr").remove();
+            $("#playsBody tr").remove();
+            $("#overviewBody tr").remove();
+
+            awsLambda.invoke(lambdaParams, function(err, data) {
+                if (err) {
+                    alert(err);
+                } else {
+                    voteRecords = JSON.parse(JSON.parse(data.Payload));
+
+                    var symbols = findAllSymbols(voteRecords);
+                    getQuotes(voteRecords, symbols);
+
+                }
+            });
+
+            return false;
+        }
+
+        $(function() {
+            $("#datepicker").datepicker();
+            $("#datepicker").val(getToday());
+            refreshData();
+        });
+    </script>
+
+    <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-97008666-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+
+    <title>Cheddar Stock Stream - Stats</title>
+</head>
+<br>
+<br>
+
+<center>
+    <a href="/" ><img class="home" src="/money.png" /></a>
+    <br>
+    <hr>
+    <h1>Stats</h1>
+    <hr>
+    <br>
+
+    <p>Date: <input type="text" id="datepicker"></p>
+    <button onclick="refreshData();" >Go</button>
+
+    <br>
+    <br>
+    <br>
+
+    <table id="overview">
+        <tbody id="overviewBody">
+        </tbody>
+    </table>​
+
+    <br>
+    <br>
+
+    <h2>Winning Votes</h2>
+    <table id="plays">
+        <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>% Today</th>
+            <th>Buys</th>
+            <th>Sells</th>
+            <th>Total</th>
+        </tr>
+        </thead>
+        <tbody id="playsBody">
+        </tbody>
+    </table>
+
+
+    <br>
+    <br>
+
+    <h2>Aggregate Votes</h2>
+    <table id="stats">
+        <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>% Today</th>
+            <th>Buy Votes</th>
+            <th>Sell Votes</th>
+            <th>Total Votes</th>
+        </tr>
+        </thead>
+        <tbody id="statsBody">
+        </tbody>
+    </table>
+
+</center>
+
+</html>
