@@ -272,6 +272,13 @@
                 var avgCost = asset['avgCost'];
 
                 var lastPrice = getLastTradePrice(quote);
+                var lastClose = quote['previous_close'];
+
+                var changeToday = lastPrice - lastClose;
+                var percentChangeToday = changeToday / lastPrice * 100;
+                var isDecreaseToday = percentChangeToday < 0;
+                var changeClassToday = isDecreaseToday ? "decrease" : "increase";
+                var changeOperatorToday = isDecreaseToday ? "-" : "+";
 
                 var valueChange = lastPrice - avgCost;
 
@@ -290,7 +297,7 @@
                 var assetTr = $('<tr>');
                 assetTr.append($('<td>', {
                                     class: "symbol ",
-                                    html:  "<a target=\"_blank\" href='https://finance.yahoo.com/quote/" + symbol.replace(/\./g , "-") + "'>" + symbol + "</a>",
+                                    html:  "<a target=\"_blank\" href='http://quotes.wsj.com/" + symbol + "'>" + symbol + "</a>",
                                  }));
                 assetTr.append($('<td>', {
                                     class: "shares ",
@@ -331,6 +338,11 @@
                 assetTr.append($('<td>', {
                                     class: "percentPortfolio",
                                     html:  percentPortfolio.toFixed(2) + "%",
+                                 }));
+
+                assetTr.append($('<td>', {
+                                    class: "pctChange " + changeClassToday,
+                                    html:  changeOperatorToday + Math.abs(percentChangeToday).toFixed(2) + "%",
                                  }));
 
                 $("#assetsBody").append(assetTr);
@@ -458,6 +470,7 @@
             <th>Value</th>
             <th>$ Return</th>
             <th>Weight</th>
+            <th>% Today</th>
         </tr>
         </thead>
         <tbody id="assetsBody">
