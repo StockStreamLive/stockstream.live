@@ -1,0 +1,1 @@
+web: sh -c 'cd webapp && python webserver.py'

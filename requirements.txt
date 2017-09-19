@@ -1,0 +1,15 @@
+boto
+bleach
+bs4
+boto3
+web.py
+functools32
+pyOpenSSL
+requests
+python-twitch-client
+expiringdict
+apscheduler
+pytz
+cherrypy
+gunicorn
+Markdown

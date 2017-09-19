@@ -1,0 +1,162 @@
+$def with ()
+
+$ portfolio = stockstream.api.get_current_portfolio()
+$ symbols = [asset['symbol'] for asset in portfolio['assets']]
+$ quote_map = robinhood.api.get_symbol_to_quotes(symbols)
+$ portfolio_value = stockstream.portfolio.compute_value(portfolio)
+$ orders = stockstream.api.get_orders_today()
+
+$ start_value = 50000.0
+$ free_shares = 500.0
+
+$ total_return_percent = (portfolio_value - (start_value + free_shares)) / (start_value + free_shares) * 100;
+$ total_return_dollars = (portfolio_value) - (start_value + free_shares);
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+$:render.elements.header()
+
+<style>
+
+    .symbol a:hover {
+        color: white;
+        text-decoration: underline;
+    }
+
+    .balance {
+        color: #cccccc;
+        margin-top: 100px;
+        font-size: 1.8em;
+        display: inline;
+    }
+</style>
+
+
+<script>
+    jQuery(document).ready(
+        function() {
+            jQuery("#assets").tablesorter();
+            jQuery("#assets").trigger("update");
+            var table = jQuery('#assets');
+            table.floatThead();
+        }
+    );
+</script>
+
+</head>
+
+<body>
+
+<br>
+<br>
+
+$:render.elements.homelogo()
+
+<center>
+    <br>
+    <hr>
+    <h1>Portfolio</h1>
+    <hr>
+    <br>
+    <br>
+    <table id="overview">
+        <tbody id="overviewBody">
+        <tr><td>Start Value</td><td>\$50000</td></tr>
+        <tr><td>Free Shares</td><td>+$500</td></tr>
+        <tr><td>Net Worth</td><td>\$$:"{:.2f}".format(abs(portfolio_value))</td></tr>
+        <tr><td>ROI $$</td><td><span class="$:("loss" if total_return_dollars < 0 else "profit")">$:("-" if total_return_dollars < 0 else "+")$$$:"{:.2f}".format(abs(total_return_dollars))</td></tr>
+        <tr><td>ROI %</td><td><span class="$:("loss" if total_return_percent < 0 else "profit")">$:("-" if total_return_percent < 0 else "+")$:"{:.2f}".format(abs(total_return_percent))%</span></td></tr>
+        <tr><td>Age</td><td>$:stockstream.metrics.get_days_old() days</td></tr>
+        </tbody>
+    </table>​
+    <br>
+    <hr>
+    <span class="balance">Cash: $$$:"{:.2f}".format(abs(portfolio['cashBalance']))</span>
+    <br>
+    <hr>
+    <br>
+    <h2>Pending Orders</h2>
+    <table class="orders">
+        <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Side</th>
+            <th>Shares</th>
+            <th>Limit</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody id="ordersBody">
+        $for order in orders:
+            $ status = order['state']
+            $if status == "filled" or status == "cancelled":
+                $continue
+            <tr>
+                <td class="symbol"><a href="/symbol/$:order['symbol']">$:order['symbol']</a></td>
+                <td>$:order['side']</td>
+                <td>$:order['quantity']</td>
+                <td>\$$:"{:.2f}".format(abs(order['limit']))</td>
+                <td>$:status</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <h2>Assets</h2>
+    <table id="assets">
+        <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Shares</th>
+            <th>Paid</th>
+            <th>Quote</th>
+            <th>\$ Change</th>
+            <th>% Change</th>
+            <th>Cost</th>
+            <th>Value</th>
+            <th>\$ Return</th>
+            <th>Weight</th>
+            <th>% Today</th>
+        </tr>
+        </thead>
+        <tbody id="assetsBody">
+        $for asset in portfolio['assets']:
+            $ quote = quote_map[asset['symbol']]
+            $ shares = asset['shares']
+            $ avg_cost = asset['avgCost']
+            $ recent_price = robinhood.quote.most_recent_price(quote)
+
+            $ dollar_change = recent_price - avg_cost
+            $ percent_change = (dollar_change / avg_cost * 100)
+
+            $ total_cost = shares * avg_cost
+            $ total_value = shares * recent_price
+            $ total_dollar_return = total_value - total_cost
+
+            $ percent_portfolio = (total_value / portfolio_value) * 100
+
+            $ percent_change_today = robinhood.quote.percent_change_today(quote)
+            <tr>
+            <td class="symbol"><a href="/symbol/$:asset['symbol']">$:asset['symbol']</a></td>
+            <td>$:shares</td>
+            <td>$$$:"{:.2f}".format(abs(avg_cost))</td>
+            <td>$$$:"{:.2f}".format(abs(recent_price))</td>
+            <td><span class="$:("loss" if dollar_change < 0 else "profit")">$:("-" if dollar_change < 0 else "+")$$$:"{:.2f}".format(abs(dollar_change))</span></td>
+            <td><span class="$:("loss" if percent_change < 0 else "profit")">$:("-" if percent_change < 0 else "+")$:"{:.2f}".format(abs(percent_change))%</span></td>
+            <td>$$$:"{:.2f}".format(abs(total_cost))</td>
+            <td>$$$:"{:.2f}".format(abs(total_value))</td>
+            <td><span class="$:("loss" if total_dollar_return < 0 else "profit")">$:("-" if total_dollar_return < 0 else "+")$$$:"{:.2f}".format(abs(total_dollar_return))</span></td>
+            <td>$:"{:.2f}".format(abs(percent_portfolio))%</td>
+            <td><span class="$:("loss" if percent_change_today < 0 else "profit")">$:("-" if percent_change_today < 0 else "+")$:"{:.2f}".format(abs(percent_change_today))%</span></td>
+            </tr>
+        </tbody>
+    </table>​
+
+    $:render.elements.footer()
+
+</center>
+
+</body>
+</html>

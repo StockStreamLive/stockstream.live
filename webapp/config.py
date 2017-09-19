@@ -1,0 +1,3 @@
+import os
+
+SS_API_ENDPOINT = os.environ['STOCKSTREAM_API_ENDPOINT']

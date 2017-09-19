@@ -1,0 +1,186 @@
+$def with ()
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+$:render.elements.header()
+
+<style>
+    .follow {
+        overflow: hidden;
+        height: 90px;
+        margin: 10px;
+        border-style: none;
+        margin-top: 60px;
+        margin-bottom: 10px;
+        transition: all .05s ease;
+    }
+
+    .follow:hover {
+        transform: scale(1.2);
+    }
+
+
+    .social_media {
+        overflow: hidden;
+        height: 45px;
+        margin: 10px;
+        border-style: none;
+        margin-top: 20px;
+        margin-bottom: 10px;
+        transition: all .05s ease;
+    }
+
+    .social_media:hover {
+        transform: scale(1.2);
+    }
+
+
+    #twitchlogo {
+        filter: drop-shadow(0px 0px 15px #6441A4);
+    }
+
+    #twitchlogo:hover {
+        filter: drop-shadow(0px 0px 25px #6441A4);
+    }
+
+    #robinhoodlogo {
+        filter: drop-shadow(0px 0px 15px #00d097);
+    }
+
+    #robinhoodlogo:hover {
+        filter: drop-shadow(0px 0px 25px #00d097);
+    }
+
+    #stocktwitslogo {
+        filter: drop-shadow(0px 0px 15px #3f5770);
+    }
+
+    #stocktwitslogo:hover {
+        filter: drop-shadow(0px 0px 25px #3f5770);
+    }
+
+    #twitterlogo {
+        filter: drop-shadow(0px 0px 15px #1da1f2);
+    }
+
+    #twitterlogo:hover {
+        filter: drop-shadow(0px 0px 25px #1da1f2);
+    }
+
+    #discordlogo {
+        filter: drop-shadow(0px 0px 15px #7289da);
+    }
+
+    #discordlogo:hover {
+        filter: drop-shadow(0px 0px 25px #7289da);
+    }
+
+    #ponyexpress {
+        color: #ff69b4;
+    }
+
+    .cheddar {
+        color: #ff0ba8;
+    }
+
+    .gamebox {
+        margin-top: 80px;
+        margin-bottom: 60px;
+        white-space: nowrap;
+        display: inline-block;
+    }
+
+    .chat {
+        box-shadow: 0px 0px 100px #ff0ba8;
+        display: inline-block;
+        margin: 0px;
+        padding: 0px;
+    }
+
+    .player {
+        box-shadow: 0px 0px 100px #ff0ba8;
+        display: inline-block;
+        margin-right: 10px;
+        padding: 0px;
+    }
+
+    #portfoliologo {
+        filter: drop-shadow(0px 0px 15px #00d097);
+    }
+
+    #portfoliologo:hover {
+        filter: drop-shadow(0px 0px 25px #00d097);
+    }
+
+    #scoreslogo {
+        filter: drop-shadow(0px 0px 15px yellow);
+    }
+
+    #scoreslogo:hover {
+        filter: drop-shadow(0px 0px 25px yellow);
+    }
+
+    #wikilogo {
+        filter: drop-shadow(0px 0px 15px teal);
+    }
+
+    #wikilogo:hover {
+        filter: drop-shadow(0px 0px 25px teal);
+    }
+
+    #heading {
+        margin-top: 40px;
+    }
+
+</style>
+
+</head>
+
+<body>
+
+
+<center>
+
+    <h1>World's First Multiplayer Stock Market Game Using Real Money</h1>
+
+    <br>
+
+    <div class="gamebox">
+        <iframe class="player"
+                src="https://player.twitch.tv/?channel=stockstream"
+                frameborder="0"
+                allowfullscreen="true"
+                scrolling="no"
+                height="509"
+                width="900">
+        </iframe>
+
+        <iframe frameborder="0"
+                scrolling="no"
+                class="chat"
+                id="chat_embed"
+                src="https://www.twitch.tv/stockstream/chat?darkpopout"
+                height="509"
+                width="350">
+        </iframe>
+    </div>
+
+    <br>
+
+    <a target="_blank" href="https://twitch.tv/stockstream"><img id="twitchlogo" class="social_media" src="/static/twitch-logo.png"/></a>
+    <a target="_blank" href="https://twitter.com/stockstream"><img id="twitterlogo" class="social_media" src="/static/twtr-logo.png"/></a>
+    <a target="_blank" href="https://stocktwits.com/stockstream"><img id="stocktwitslogo" class="social_media" src="/static/stocktwits-logo.png"/></a>
+    <a target="_blank" href="https://discord.gg/xnrKgEj"><img id="discordlogo" class="social_media" src="/static/discord-logo.png"/></a>
+
+    <br>
+    <br>
+
+    <a href="/portfolio"><img id="portfoliologo" class="follow" src="/static/plaque-portfolio.png"/></a>
+
+    $:render.elements.footer()
+
+</center>
+
+</body>
+</html>
