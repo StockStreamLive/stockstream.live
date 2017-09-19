@@ -1,0 +1,181 @@
+$def with (symbol)
+
+$ orders = stockstream.api.get_orders_by_symbol(symbol)
+$ instrument = robinhood.api.get_instrument_for_symbol(symbol)
+$ fundamentals = robinhood.api.get_fundamentals(symbol)
+$ market = tradingview_api.get_market_for_instrument(instrument)
+$ stats = stockstream.metrics.compute_stats_for_symbol(symbol)
+
+$ portfolio = stockstream.api.get_current_portfolio()
+$ asset_map = stockstream.portfolio.get_symbol_to_asset(portfolio)
+
+$ pe_ratio = "{:.2f}".format(float(fundamentals['pe_ratio'])) if fundamentals['pe_ratio'] is not None else "-"
+$ dividend_yield = "{:.2f}".format(float(fundamentals['dividend_yield'])) if fundamentals['dividend_yield'] is not None else "-"
+$ market_cap = "$" + scrub.human_format(float(fundamentals['market_cap'])) if fundamentals['market_cap'] is not None else "-"
+
+$ dollar_change = stats['dollar_change']
+$ percent_change = stats['percent_change']
+$ percent_change_str = ("-" if percent_change < 0 else "+") + "{:.2f}".format(abs(percent_change)) + "%"
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<title>$:symbol $:percent_change_str $$$:stats['recent_price']</title>
+
+$:render.elements.header()
+
+<style>
+    table {
+        border-collapse: collapse;
+        display: inline-block;
+    }
+
+    table td {
+        border: 1px dotted #ffffff;
+        padding: 6px;
+        text-align: center;
+        font-size: 1em;
+    }
+
+    table tr:hover {
+        background: #353535;
+    }
+
+    table th {
+        border: 1px dotted #ffffff;
+        padding: 5px;
+        cursor: pointer; cursor: hand;
+        font-size: 1.2em;
+        background: black;
+    }
+
+    table th:hover {
+        color: cyan;
+        border: 1px solid #ffffff;
+        padding: .1em;
+        padding: 5px;
+        cursor: pointer; cursor: hand;
+        font-size: 1.2em;
+    }
+
+    .description {
+        width: 65%;
+        line-height: 1.3;
+    }
+
+    .price {
+        color: white;
+        font-size: 1.3em;
+    }
+
+</style>
+
+<script>
+    jQuery(document).ready(
+        function() {
+            jQuery("#orders").tablesorter();
+            jQuery("#orders").trigger("update");
+        }
+    );
+</script>
+
+
+</head>
+<body>
+
+<br>
+<br>
+
+$:render.elements.homelogo()
+
+
+
+<center>
+    <br>
+    <hr>
+    <h1>$:symbol</h1>
+    <h3>$:instrument['name']</h3>
+    <span class="price">$$$:"{:.2f}".format(stats['recent_price'])</span>
+    <span class="$:("loss" if dollar_change < 0 else "profit")">$:("-" if dollar_change < 0 else "+")$$$:"{:.2f}".format(abs(dollar_change))</span>
+    <span class="$:("loss" if percent_change < 0 else "profit")">$:percent_change_str</span>
+    <br>
+    <br>
+    <hr>
+
+    $if symbol in asset_map:
+        $ asset = asset_map[symbol]
+        <span class="holding">Own $:asset['shares'] of $:symbol at $$$:"{:.2f}".format(asset['avgCost'])</span>
+        <hr>
+
+    <br>
+    <table id="overview">
+        <tbody id="overviewBody">
+        <tr><td>Shares Bought</td><td>$:stats['bought']</td></tr>
+        <tr><td>Shares Sold</td><td>$:stats['sold']</td></tr>
+        <tr><td>Total</td><td>$:(stats['bought'] + stats['sold'])</td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td>Shares Owned</td><td>$:(stats['bought'] - stats['sold'])</td></tr>
+        <tr><td>Last Price</td><td>\$$:("{:.2f}".format(stats['recent_price']))</td></tr>
+        <tr><td></td><td></td></tr>
+        <tr><td>Total Return</td><td>$:(locale.currency(stats['net'], grouping=True))</td></tr>
+        </tbody>
+    </table>​
+
+
+    <table id="fundamentals">
+        <tbody id="fundamentalsBody">
+        <tr><td>Range Today</td><td>\$$:"{:.2f}".format(float(fundamentals['low'])) - \$$:"{:.2f}".format(float(fundamentals['high']))</td></tr>
+        <tr><td>52 Week Range</td><td>\$$:"{:.2f}".format(float(fundamentals['low_52_weeks'])) - \$$:"{:.2f}".format(float(fundamentals['high_52_weeks']))</td></tr>
+        <tr><td>Open</td><td>\$$:"{:.2f}".format(float(fundamentals['open']))</td></tr>
+        <tr><td>Market Cap</td><td>$:market_cap</td></tr>
+        <tr><td>Volume/Average</td><td>$:scrub.human_format(float(fundamentals['volume']))/$:scrub.human_format(float(fundamentals['average_volume']))</td></tr>
+        <tr><td>P/E Ratio</td><td>$:pe_ratio</td></tr>
+        <tr><td>Dividend/Yield</td><td>$:dividend_yield</td></tr>
+        </tbody>
+    </table>​
+    <br>
+    <hr>
+
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=$:market%3A$:symbol&amp;interval=5&amp;hidesidetoolbar=0&amp;symboledit=0&amp;saveimage=1&amp;toolbarbg=f1f3f6&amp;studies=%5B%5D&amp;hideideas=1&amp;theme=Dark&amp;style=2&amp;timezone=Etc%2FUTC&amp;withdateranges=1&amp;studies_overrides=%7B%7D&amp;overrides=%7B%7D&amp;enabled_features=%5B%5D&amp;disabled_features=%5B%5D&amp;locale=en&amp;utm_source=www.tradingview.com&amp;utm_medium=widget&amp;utm_campaign=chart&amp;utm_term=NASDAQ%3AAAPL" width="980" height="610" frameborder="0" allowtransparency="true" scrolling="no" allowfullscreen=""></iframe>
+
+    <br>
+
+    $if len(fundamentals['description']):
+        <hr>
+        <div class="description">
+            $:fundamentals['description']
+        </div>
+        <hr>
+
+    <br>
+    <h2>Orders</h2>
+    <table id="orders" class="orders">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th>Side</th>
+            <th>Shares</th>
+            <th>Price</th>
+        </tr>
+        </thead>
+        <tbody id="ordersBody">
+        $for order in orders:
+            $if order['state'] != 'filled':
+                $continue
+            <tr>
+            <td>$:datetime.fromtimestamp(order['timestamp'] / 1000).strftime('%m-%d-%Y %H:%M:%S')</td>
+            <td>$:order['side']</td>
+            <td>$:order['quantity']</td>
+            <td>\$$:"{:.2f}".format(abs(order['price']))</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <br>
+
+</center>
+
+</body>
+</html>

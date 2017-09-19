@@ -1,0 +1,51 @@
+$def with (content)
+
+<!doctype html>
+
+<html>
+
+<head>
+$:render.elements.header()
+
+    <style>
+        html {
+            line-height: 1.2;
+        }
+
+        h1, h2 {
+            text-align: center;
+        }
+
+        strong {
+            color: white;
+        }
+
+        pre {
+            margin-left: 75px;
+            border-style: solid red;
+            padding: 10px;
+            padding-right: 50px;
+            border-width: 5px;
+            background-color: #313131;
+            width: 50%;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+    $:render.elements.homelogo()
+    <hr>
+
+
+    <center>
+        <div style="display: inline-block; text-align: left; width: 50%;">$:content</div>
+    </center>
+
+    $:render.elements.footer()
+<br>
+</body>
+
+</html>
