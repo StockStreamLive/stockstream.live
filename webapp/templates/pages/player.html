@@ -7,7 +7,6 @@ $ player_profile = stockstream.player.compute_player_profile(scoped_username)
 $ profile_stats = player_profile['profile_statistics']
 
 $ open_symbols = set([order['symbol'] for order in player_profile['influenced_orders']['open']])
-$ quote_map = robinhood.api.get_symbol_to_quotes(open_symbols)
 
 $ total_trades = float(profile_stats['profitable_trades'] + profile_stats['unprofitable_trades'])
 $ total_trades = 1 if total_trades == 0 else total_trades
@@ -169,7 +168,6 @@ $:render.elements.homelogo()
 
             $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y %H:%M:%S')
 
-            $ quote = quote_map[symbol]
             $ recent_price = order['recent_price']
             $ buy_price = order['buy_price']
             $ difference = order['difference']
