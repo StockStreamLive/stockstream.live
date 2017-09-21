@@ -3,7 +3,7 @@ import traceback
 from expiringdict import ExpiringDict
 import sys
 
-url_cache = ExpiringDict(max_len=7500, max_age_seconds=150)
+url_cache = ExpiringDict(max_len=500, max_age_seconds=150)
 
 
 def get_json_object_from_url(url):

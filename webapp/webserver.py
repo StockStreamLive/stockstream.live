@@ -119,17 +119,17 @@ class Player:
         raise web.seeother('/')
 
     def GET(self, scoped_username):
-        try:
-            name = scoped_username.split(":")[1]
-            client = TwitchClient(client_id='ohlre6lyirmibqf5jhxz8taxnnc3m6')
-            users = client.users.translate_usernames_to_ids([name])
-            channel = client.channels.get_by_id(users[0]['id'])
+        #try:
+        name = scoped_username.split(":")[1]
+        client = TwitchClient(client_id='ohlre6lyirmibqf5jhxz8taxnnc3m6')
+        users = client.users.translate_usernames_to_ids([name])
+        channel = client.channels.get_by_id(users[0]['id'])
 
-            render._keywords['globals']['model'] = {}
+        render._keywords['globals']['model'] = {}
 
-            return render.pages.player(scoped_username, channel)
-        except Exception as ex:
-            return notfound()
+        return render.pages.player(scoped_username, channel)
+        #except Exception as ex:
+        #    return notfound()
 
 
 class Portfolio:
@@ -211,6 +211,6 @@ if __name__ == '__main__':
 
     options = {
         'bind': '%s:%s' % ('0.0.0.0', port),
-        'workers': 10,
+        'workers': 15,
     }
     StandaloneApplication(wsgi, options).run()
