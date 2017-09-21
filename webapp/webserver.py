@@ -211,6 +211,6 @@ if __name__ == '__main__':
 
     options = {
         'bind': '%s:%s' % ('0.0.0.0', port),
-        'workers': 10,
+        'workers': 15,
     }
     StandaloneApplication(wsgi, options).run()

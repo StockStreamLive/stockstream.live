@@ -4,11 +4,9 @@ $if twitch_user['logo'] is None:
     $ twitch_user['logo'] = "/static/8bitmoney.png"
 
 $ player_profile = stockstream.player.compute_player_profile(scoped_username)
-$ profile_stats = stockstream.player.get_profile_statistics(player_profile)
-$ total_return = profile_stats['realized_return'] + profile_stats['unrealized_return']
+$ profile_stats = player_profile['profile_statistics']
 
 $ open_symbols = set([order['symbol'] for order in player_profile['influenced_orders']['open']])
-$ quote_map = robinhood.api.get_symbol_to_quotes(open_symbols)
 
 $ total_trades = float(profile_stats['profitable_trades'] + profile_stats['unprofitable_trades'])
 $ total_trades = 1 if total_trades == 0 else total_trades
@@ -105,27 +103,48 @@ $:render.elements.homelogo()
             <tr><td>Unprofitable Trades</td><td>$:profile_stats['unprofitable_trades']</td></tr>
             <tr><td>% Profitable</td><td>$:"{:.2f}".format(abs(percent_profitable))%</td></tr>
             <tr><td>Trades Influenced</td><td>$:profile_stats['total_influenced']</td></tr>
-            <tr><td></td><td></td></tr>
             <tr>
-                <td>Realized Return</td>
-                <td><span class="$:("loss" if profile_stats['realized_return'] < 0 else "profit")">$:("-" if profile_stats['realized_return'] < 0 else "+")$$$:"{:.2f}".format(abs(profile_stats['realized_return']))</span></td>
-            </tr>
-            <tr>
-                <td>Unrealized Return</td>
-                <td><span class="$:("loss" if profile_stats['unrealized_return'] < 0 else "profit")">$:("-" if profile_stats['unrealized_return'] < 0 else "+")$$$:"{:.2f}".format(abs(profile_stats['unrealized_return']))</span></td>
-            </tr>
-            <tr>
-                <td>Average Return</td>
-                <td><span class="$:("loss" if profile_stats['average_return'] < 0 else "profit")">$:("-" if profile_stats['average_return'] < 0 else "+")$$$:"{:.2f}".format(abs(profile_stats['average_return']))</span></td>
-            </tr>
-            <tr>
-                <td>Total Return</td>
-                <td><span class="$:("loss" if total_return < 0 else "profit")">$:("-" if total_return < 0 else "+")$$$:"{:.2f}".format(abs(total_return))</span></td>
+                <td>Score</td>
+                <td><span class="$:("loss" if profile_stats['total_percent_return'] < 0 else "profit")">$:("-" if profile_stats['total_percent_return'] < 0 else "+")$:"{:.2f}".format(abs(profile_stats['total_percent_return']))%</span></td>
             </tr>
             </tbody>
         </table>​
-
     </div>
+
+    <br>
+
+    <table id="stats">
+        <tbody id="statsBody">
+        <tr>
+            <td></td>
+            <td>Spent</td>
+            <td>Now/Sold</td>
+            <td>Liability</td>
+            <td>Return %</td>
+        </tr>
+        <tr>
+            <td>Unrealized</td>
+            <td><span>$$$:"{:.2f}".format(abs(profile_stats['unrealized_buy_price']))</span></td>
+            <td><span>$$$:"{:.2f}".format(abs(profile_stats['unrealized_sell_price']))</span></td>
+            <td><span class="$:("loss" if profile_stats['unrealized_return'] < 0 else "profit")">$:("-" if profile_stats['unrealized_return'] < 0 else "+")$$$:"{:.2f}".format(abs(profile_stats['unrealized_return']))</span></td>
+            <td><span class="$:("loss" if profile_stats['unrealized_percent_return'] < 0 else "profit")">$:("-" if profile_stats['unrealized_percent_return'] < 0 else "+")$:"{:.2f}".format(abs(profile_stats['unrealized_percent_return']))%</span></td>
+        </tr>
+        <tr>
+            <td>Realized</td>
+            <td><span>$$$:"{:.2f}".format(abs(profile_stats['realized_buy_price']))</span></td>
+            <td><span>$$$:"{:.2f}".format(abs(profile_stats['realized_sell_price']))</span></td>
+            <td><span class="$:("loss" if profile_stats['realized_return'] < 0 else "profit")">$:("-" if profile_stats['realized_return'] < 0 else "+")$$$:"{:.2f}".format(abs(profile_stats['realized_return']))</span></td>
+            <td><span class="$:("loss" if profile_stats['realized_percent_return'] < 0 else "profit")">$:("-" if profile_stats['realized_percent_return'] < 0 else "+")$:"{:.2f}".format(abs(profile_stats['realized_percent_return']))%</span></td>
+        </tr>
+        <tr>
+            <td>Total</td>
+            <td><span>$$$:"{:.2f}".format(abs(profile_stats['total_buy_price']))</span></td>
+            <td><span>$$$:"{:.2f}".format(abs(profile_stats['total_sell_price']))</span></td>
+            <td><span class="$:("loss" if profile_stats['total_return'] < 0 else "profit")">$:("-" if profile_stats['total_return'] < 0 else "+")$$$:"{:.2f}".format(abs(profile_stats['total_return']))</span></td>
+            <td><span class="$:("loss" if profile_stats['total_percent_return'] < 0 else "profit")">$:("-" if profile_stats['total_percent_return'] < 0 else "+")$:"{:.2f}".format(abs(profile_stats['total_percent_return']))%</span></td>
+        </tr>
+        </tbody>
+    </table>​
 
     <hr>
 
@@ -149,14 +168,12 @@ $:render.elements.homelogo()
 
             $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y %H:%M:%S')
 
-            $ quote = quote_map[symbol]
-            $ recent_price = robinhood.quote.most_recent_price(quote)
+            $ recent_price = order['recent_price']
             $ buy_price = order['buy_price']
-            $ difference = recent_price - buy_price
-            $ percent_change = (difference / buy_price * 100)
-
+            $ difference = order['difference']
+            $ liability = order['liability']
+            $ percent_change = order['percent_change']
             $ influence_percent = order['influence'] * 100
-            $ responsibility = difference * order['influence']
 
             <tr>
                 <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
@@ -166,7 +183,7 @@ $:render.elements.homelogo()
                 <td>$:"{:.2f}".format(abs(influence_percent))%</td>
                 <td><span class="$:("loss" if difference < 0 else "profit")">$:("-" if difference < 0 else "+")$$$:"{:.2f}".format(abs(difference))</span></td>
                 <td><span class="$:("loss" if percent_change < 0 else "profit")">$:("-" if percent_change < 0 else "+")$:"{:.2f}".format(abs(percent_change))%</span></td>
-                <td><span class="$:("loss" if responsibility < 0 else "profit")">$:("-" if responsibility < 0 else "+")$$$:"{:.2f}".format(abs(responsibility))</span></td>
+                <td><span class="$:("loss" if liability < 0 else "profit")">$:("-" if liability < 0 else "+")$$$:"{:.2f}".format(abs(liability))</span></td>
             </tr>
         </tbody>
     </table>
@@ -197,11 +214,10 @@ $:render.elements.homelogo()
 
             $ sell_price = order['sell_price']
             $ buy_price = order['buy_price']
-            $ difference = sell_price - buy_price
-            $ percent_change = (difference / buy_price * 100)
-
+            $ difference = order['difference']
+            $ percent_change = order['percent_change']
             $ influence_percent = order['influence'] * 100
-            $ responsibility = difference * order['influence']
+            $ liability = order['liability']
 
             <tr>
                 <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
@@ -212,7 +228,7 @@ $:render.elements.homelogo()
                 <td>$:"{:.2f}".format(abs(influence_percent))%</td>
                 <td><span class="$:("loss" if difference < 0 else "profit")">$:("-" if difference < 0 else "+")$$$:"{:.2f}".format(abs(difference))</span></td>
                 <td><span class="$:("loss" if percent_change < 0 else "profit")">$:("-" if percent_change < 0 else "+")$:"{:.2f}".format(abs(percent_change))%</span></td>
-                <td><span class="$:("loss" if responsibility < 0 else "profit")">$:("-" if responsibility < 0 else "+")$$$:"{:.2f}".format(abs(responsibility))</span></td>
+                <td><span class="$:("loss" if liability < 0 else "profit")">$:("-" if liability < 0 else "+")$$$:"{:.2f}".format(abs(liability))</span></td>
             </tr>
         </tbody>
     </table>

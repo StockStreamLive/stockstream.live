@@ -1,12 +1,17 @@
 import stockstream
 import robinhood
-import json
 
-from operator import itemgetter
+
+def compute_change_decimal(from_value, to_value):
+    if from_value == 0 and to_value == 0:
+        return 0
+    from_value = max(1, from_value)
+    difference = (to_value - from_value)
+    percent_change = (difference / from_value)
+    return percent_change
 
 
 def organize_positions(positions, symbol_to_quote):
-    total = 0
 
     influenced_orders = {
         "open": [],
@@ -27,16 +32,20 @@ def organize_positions(positions, symbol_to_quote):
             if quote is None:
                 continue
 
-            price = robinhood.quote.most_recent_price(quote)
-            difference = (price - buy_order['price'])
-            mod = difference * influence
+            recent_price = robinhood.quote.most_recent_price(quote)
+            difference = (recent_price - buy_order['price'])
+            percent_change = compute_change_decimal(buy_order['price'], recent_price)
+            liability = difference * influence
 
             influenced_orders['open'].append({
                 "symbol": symbol,
                 "buy_time": buy_order['timestamp'],
                 "buy_price": buy_order['price'],
+                "recent_price": recent_price,
+                "difference": difference,
+                "percent_change": percent_change,
                 "influence": influence,
-                "recent_price": price,
+                "liability": liability,
                 "quote": quote
             })
 
@@ -44,10 +53,9 @@ def organize_positions(positions, symbol_to_quote):
             sell_order = position['sellOrder']
 
             difference = sell_order['price'] - buy_order['price']
-
+            percent_change = compute_change_decimal(buy_order['price'], sell_order['price'])
             sell_time = stockstream.order.find_execution_timestamp_for_order(sell_order)
-
-            mod = influence * difference
+            liability = influence * difference
 
             influenced_orders['closed'].append({
                 "symbol": symbol,
@@ -55,10 +63,11 @@ def organize_positions(positions, symbol_to_quote):
                 "sell_time": sell_time,
                 "buy_price": buy_order['price'],
                 "sell_price": sell_order['price'],
+                "difference": difference,
+                "percent_change": percent_change,
+                "liability": liability,
                 "influence": influence
             })
-
-        total += mod
 
     return influenced_orders
 
@@ -71,127 +80,83 @@ def compute_player_profile(username):
     symbol_to_quote = robinhood.api.get_symbol_to_quotes(symbols)
 
     influenced_orders = stockstream.player.organize_positions(positions, symbol_to_quote)
+    profile_statistics = stockstream.player.get_profile_statistics(influenced_orders)
 
     print "Got influenced orders"
 
     return {
-        "influenced_orders": influenced_orders
+        "influenced_orders": influenced_orders,
+        "profile_statistics": profile_statistics
     }
 
 
-def get_profile_statistics(profile):
-    influenced_orders = profile['influenced_orders']
-
-    total_influenced = len(influenced_orders['closed']) + len(influenced_orders['open'])
+def get_profile_statistics(influenced_orders):
 
     profitable_trades = 0
     unprofitable_trades = 0
 
-    realized_return = 0
-
-    for order in influenced_orders['closed']:
-        diff = order['sell_price'] - order['buy_price']
-        mod = diff * order['influence']
-
-        if mod > 0:
-            profitable_trades += 1
-        else:
-            unprofitable_trades += 1
-
-        realized_return += mod
+    realized_liability = 0
+    realized_buy_price = 0
+    realized_sell_price = 0
 
     unrealized_return = 0
+    unrealized_buy_price = 0
+    unrealized_sell_price = 0
 
-    for order in influenced_orders['open']:
-        diff = order['recent_price'] - order['buy_price']
-        mod = diff * order['influence']
-
-        if mod > 0:
+    for order in influenced_orders['closed']:
+        if order['liability'] > 0:
             profitable_trades += 1
         else:
             unprofitable_trades += 1
 
-        unrealized_return += mod
+        realized_liability += order['liability']
+        realized_buy_price += order['buy_price'] * order['influence']
+        realized_sell_price += order['sell_price'] * order['influence']
 
-    div = 1 if total_influenced == 0 else total_influenced
-    average_return = (realized_return + unrealized_return) / float(div)
+    for order in influenced_orders['open']:
+        if order['liability'] > 0:
+            profitable_trades += 1
+        else:
+            unprofitable_trades += 1
+
+        unrealized_return += order['liability']
+        unrealized_buy_price += order['buy_price'] * order['influence']
+        unrealized_sell_price += order['recent_price'] * order['influence']
+
+    total_open = len(influenced_orders['open'])
+    total_closed = len(influenced_orders['closed'])
+    total_influenced = total_open + total_closed
+
+    realized_percent_return = compute_change_decimal(realized_buy_price, realized_sell_price) * 100
+    unrealized_percent_return = compute_change_decimal(unrealized_buy_price, unrealized_sell_price) * 100
+
+    total_return = unrealized_return + realized_liability
+
+    total_buy_price = realized_buy_price + unrealized_buy_price
+    total_sell_price = realized_sell_price + unrealized_sell_price
+
+    total_percent_return = compute_change_decimal(total_buy_price, total_sell_price) * 100
 
     return {
+        'total_open': total_open,
+        'total_closed': total_closed,
         'total_influenced': total_influenced,
+
+        'realized_return': realized_liability,
+        'realized_buy_price': realized_buy_price,
+        'realized_sell_price': realized_sell_price,
+        'realized_percent_return': realized_percent_return,
+
+        'unrealized_return': unrealized_return,
+        'unrealized_buy_price': unrealized_buy_price,
+        'unrealized_sell_price': unrealized_sell_price,
+        'unrealized_percent_return': unrealized_percent_return,
+
         'profitable_trades': profitable_trades,
         'unprofitable_trades': unprofitable_trades,
-        'realized_return': realized_return,
-        'unrealized_return': unrealized_return,
-        'average_return': average_return
+
+        'total_return': total_return,
+        'total_percent_return': total_percent_return,
+        'total_buy_price': total_buy_price,
+        'total_sell_price': total_sell_price
     }
-
-
-def get_player_overview(username):
-    votes = stockstream.api.get_votes_by_user(username)
-
-    buy_sell_stats = {"BUY": 0, "SELL": 0}
-    symbol_to_buy_sell = {}
-    votes_by_date = {}
-    cmd_stats = {}
-    symbol_stats = {}
-
-    for vote in votes:
-        symbol = vote['parameter']
-        action = vote['action']
-        cmd = action + " " + symbol
-        date = vote['date']
-
-        if cmd not in cmd_stats:
-            cmd_stats[cmd] = 0
-
-        if symbol not in symbol_stats:
-            symbol_stats[symbol] = 0
-
-        if date not in votes_by_date:
-            votes_by_date[date] = {"BUY": 0, "SELL": 0}
-
-        if symbol not in symbol_to_buy_sell:
-            symbol_to_buy_sell[symbol] = {"BUY": 0, "SELL": 0}
-
-        cmd_stats[cmd] += 1
-        symbol_stats[symbol] += 1
-        buy_sell_stats[action] += 1
-        votes_by_date[date][action] += 1
-        symbol_to_buy_sell[symbol][action] += 1
-
-    sorted_cmds = sorted(cmd_stats.iteritems(), key=itemgetter(1), reverse=True)
-    sorted_dates = sorted(votes_by_date.iteritems(), key=itemgetter(0), reverse=False)
-
-    top_cmds = {}
-    end = 10
-    if len(sorted_cmds) < end:
-        end = len(sorted_cmds) - 1
-
-    while end >= 0:
-        cmd = sorted_cmds[end]
-        top_cmds[cmd[0]] = cmd[1]
-        end -= 1
-
-    other_stats = {}
-    symbol_stats_filtered = {}
-    for symbol in symbol_stats.keys():
-        votes = symbol_stats[symbol]
-        if votes <= 5:
-            if "Other" not in symbol_stats_filtered:
-                symbol_stats_filtered["Other"] = 0
-            symbol_stats_filtered["Other"] += votes
-
-            other_stats[symbol] = votes
-
-        else:
-            symbol_stats_filtered[symbol] = symbol_stats[symbol]
-
-    return {
-        "BUY": buy_sell_stats["BUY"],
-        "SELL": buy_sell_stats["SELL"],
-        "symbol_stats": symbol_stats_filtered,
-        "other_stats": other_stats,
-        "votes_list": sorted_dates,
-        "symbol_to_buy_sell": json.dumps(symbol_to_buy_sell)
-    }
-
