@@ -9,7 +9,7 @@ last_update = 0
 
 def update_profile(username):
     print "Updating {}".format(username)
-    profile = stockstream.player.compute_player_profile(username)
+    profile = stockstream.positions.assemble_positions(username)
     path = username.replace(":", "/")
     s3util.write_file_data("api.stockstream.live", "profile/" + path, json.dumps(profile))
 

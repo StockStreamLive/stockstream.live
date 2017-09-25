@@ -1,6 +1,7 @@
 $def with (symbol)
 
 $ orders = stockstream.api.get_orders_by_symbol(symbol)
+$ positions = stockstream.api.get_positions_by_symbol(symbol)
 $ instrument = robinhood.api.get_instrument_for_symbol(symbol)
 $ fundamentals = robinhood.api.get_fundamentals(symbol)
 $ market = tradingview_api.get_market_for_instrument(instrument)
@@ -8,6 +9,8 @@ $ stats = stockstream.metrics.compute_stats_for_symbol(symbol)
 
 $ portfolio = stockstream.api.get_current_portfolio()
 $ asset_map = stockstream.portfolio.get_symbol_to_asset(portfolio)
+
+$ symbol_profile = stockstream.positions.assemble_positions(positions)
 
 $ pe_ratio = "{:.2f}".format(float(fundamentals['pe_ratio'])) if fundamentals['pe_ratio'] is not None else "-"
 $ dividend_yield = "{:.2f}".format(float(fundamentals['dividend_yield'])) if fundamentals['dividend_yield'] is not None else "-"
@@ -27,37 +30,16 @@ $ percent_change_str = ("-" if percent_change < 0 else "+") + "{:.2f}".format(ab
 $:render.elements.header()
 
 <style>
-    table {
-        border-collapse: collapse;
+    #overview {
         display: inline-block;
     }
 
-    table td {
-        border: 1px dotted #ffffff;
-        padding: 6px;
-        text-align: center;
-        font-size: 1em;
+    #fundamentals {
+        display: inline-block;
     }
 
-    table tr:hover {
-        background: #353535;
-    }
-
-    table th {
-        border: 1px dotted #ffffff;
-        padding: 5px;
-        cursor: pointer; cursor: hand;
-        font-size: 1.2em;
-        background: black;
-    }
-
-    table th:hover {
-        color: cyan;
-        border: 1px solid #ffffff;
-        padding: .1em;
-        padding: 5px;
-        cursor: pointer; cursor: hand;
-        font-size: 1.2em;
+    .timestamp {
+        white-space: nowrap;
     }
 
     .description {
@@ -77,6 +59,16 @@ $:render.elements.header()
         function() {
             jQuery("#orders").tablesorter();
             jQuery("#orders").trigger("update");
+
+            jQuery("#openOrders").tablesorter();
+            jQuery("#openOrders").trigger("update");
+            var table = jQuery('#openOrders');
+            table.floatThead();
+
+            jQuery("#closedOrders").tablesorter();
+            jQuery("#closedOrders").trigger("update");
+            var table = jQuery('#closedOrders');
+            table.floatThead();
         }
     );
 </script>
@@ -150,28 +142,91 @@ $:render.elements.homelogo()
         <hr>
 
     <br>
-    <h2>Orders</h2>
-    <table id="orders" class="orders">
+
+    <h2>Open Positions</h2>
+    <table id="openOrders">
         <thead>
         <tr>
-            <th>Date</th>
-            <th>Side</th>
-            <th>Shares</th>
-            <th>Price</th>
+            <th>Buy Date</th>
+            <th>Buy Price</th>
+            <th>Quote</th>
+            <th>Return $$</th>
+            <th>Return %</th>
+            <th>Owners</th>
         </tr>
         </thead>
-        <tbody id="ordersBody">
-        $for order in orders:
-            $if order['state'] != 'filled':
-                $continue
+        <tbody id="openOrdersBody">
+        $for order in symbol_profile['influenced_orders']['open']:
+            $ symbol = order['symbol']
+
+            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M:%S')
+
+            $ recent_price = order['recent_price']
+            $ buy_price = order['buy_price']
+            $ difference = order['difference']
+            $ liability = order['liability']
+            $ percent_change = order['percent_change']
+            $ influence_percent = order['influence'] * 100
+
             <tr>
-            <td>$:datetime.fromtimestamp(order['timestamp'] / 1000).strftime('%m-%d-%Y %H:%M:%S')</td>
-            <td>$:order['side']</td>
-            <td>$:order['quantity']</td>
-            <td>\$$:"{:.2f}".format(abs(order['price']))</td>
+                <td class="timestamp">$:buy_time</td>
+                <td>\$$:"{:.2f}".format(abs(buy_price))</td>
+                <td>\$$:"{:.2f}".format(abs(recent_price))</td>
+                <td><span class="$:("loss" if difference < 0 else "profit")">$:("-" if difference < 0 else "+")$$$:"{:.2f}".format(abs(difference))</span></td>
+                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:("-" if percent_change < 0 else "+")$:"{:.2f}".format(abs(percent_change))%</span></td>
+                <td>
+                    $for player in order['liable_players']:
+                        <span><a href="/player/$player">$player.split(":")[1]</a></span>
+                </td>
             </tr>
         </tbody>
     </table>
+
+    <hr>
+
+    <h2>Closed Positions</h2>
+    <table id="closedOrders">
+        <thead>
+        <tr>
+            <th>Buy Date</th>
+            <th>Sell Date</th>
+            <th>Buy Price</th>
+            <th>Sell Price</th>
+            <th>Return $$</th>
+            <th>Return %</th>
+            <th>Owners</th>
+        </tr>
+        </thead>
+        <tbody id="closedOrdersBody">
+        $for order in symbol_profile['influenced_orders']['closed']:
+            $ symbol = order['symbol']
+
+            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M:%S')
+            $ sell_time = datetime.fromtimestamp(order['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M:%S')
+
+            $ sell_price = order['sell_price']
+            $ buy_price = order['buy_price']
+            $ difference = order['difference']
+            $ percent_change = order['percent_change']
+            $ liability = order['liability']
+
+            <tr>
+                <td class="timestamp">$:buy_time</td>
+                <td class="timestamp">$:sell_time</td>
+                <td>\$$:"{:.2f}".format(abs(buy_price))</td>
+                <td>\$$:"{:.2f}".format(abs(sell_price))</td>
+                <td><span class="$:("loss" if difference < 0 else "profit")">$:("-" if difference < 0 else "+")$$$:"{:.2f}".format(abs(difference))</span></td>
+                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:("-" if percent_change < 0 else "+")$:"{:.2f}".format(abs(percent_change))%</span></td>
+                <td>
+                    $for player in order['liable_players']:
+                        <span><a href="/player/$player">$player.split(":")[1]</a></span>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    $:render.elements.footer()
+
     <br>
     <br>
 
