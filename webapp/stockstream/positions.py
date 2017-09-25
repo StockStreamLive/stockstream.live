@@ -7,8 +7,8 @@ def compute_change_decimal(from_value, to_value):
         return 0
     from_value = 1 if from_value == 0 else from_value
     difference = (to_value - from_value)
-    percent_change = (difference / from_value)
-    return percent_change
+    decimal_change = (difference / from_value)
+    return decimal_change
 
 
 def organize_positions(positions, symbol_to_quote):
@@ -38,7 +38,7 @@ def organize_positions(positions, symbol_to_quote):
 
             recent_price = robinhood.quote.most_recent_price(quote)
             difference = (recent_price - buy_order['price'])
-            percent_change = compute_change_decimal(buy_order['price'], recent_price)
+            percent_change = compute_change_decimal(buy_order['price'], recent_price) * 100
             liability = difference * influence
 
             influenced_orders['open'].append({
@@ -58,7 +58,7 @@ def organize_positions(positions, symbol_to_quote):
             sell_order = position['sellOrder']
 
             difference = sell_order['price'] - buy_order['price']
-            percent_change = compute_change_decimal(buy_order['price'], sell_order['price'])
+            percent_change = compute_change_decimal(buy_order['price'], sell_order['price']) * 100
             sell_time = stockstream.order.find_execution_timestamp_for_order(sell_order)
             liability = influence * difference
 
