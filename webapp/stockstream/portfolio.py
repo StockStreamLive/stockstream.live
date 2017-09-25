@@ -1,6 +1,8 @@
 import robinhood
 import stockstream
 
+non_pending_states = {'cancelled', 'failed', 'filled'}
+
 
 def compute_value(portfolio):
     value = 0
@@ -18,7 +20,7 @@ def compute_value(portfolio):
     orders = stockstream.api.get_orders_today()
 
     for order in orders:
-        if order['state'] == 'cancelled' or order['state'] == 'filled' or order['side'] == 'sell':
+        if order['state'] in non_pending_states or order['side'] == 'sell':
             continue
         price = order['limit']
         value += price * order['quantity']
