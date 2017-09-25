@@ -3,7 +3,8 @@ $def with (scoped_username, twitch_user)
 $if twitch_user['logo'] is None:
     $ twitch_user['logo'] = "/static/8bitmoney.png"
 
-$ player_profile = stockstream.player.compute_player_profile(scoped_username)
+$ positions = stockstream.api.get_positions_by_player(scoped_username)
+$ player_profile = stockstream.positions.assemble_positions(positions)
 $ profile_stats = player_profile['profile_statistics']
 
 $ open_symbols = set([order['symbol'] for order in player_profile['influenced_orders']['open']])
@@ -45,11 +46,6 @@ $ percent_profitable = (profile_stats['profitable_trades'] / total_trades) * 100
 
         .date-graph-container {
             width: 95%;
-        }
-
-        .symbol a {
-            color: white;
-            text-decoration: none;
         }
 
         .symbol a:hover {
@@ -209,8 +205,8 @@ $:render.elements.homelogo()
         $for order in player_profile['influenced_orders']['closed']:
             $ symbol = order['symbol']
 
-            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y %H:%M:%S')
-            $ sell_time = datetime.fromtimestamp(order['sell_time'] / 1000).strftime('%m-%d-%y %H:%M:%S')
+            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M:%S')
+            $ sell_time = datetime.fromtimestamp(order['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M:%S')
 
             $ sell_price = order['sell_price']
             $ buy_price = order['buy_price']

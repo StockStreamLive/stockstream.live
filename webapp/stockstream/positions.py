@@ -5,7 +5,7 @@ import robinhood
 def compute_change_decimal(from_value, to_value):
     if from_value == 0 and to_value == 0:
         return 0
-    from_value = max(1, from_value)
+    from_value = 1 if from_value == 0 else from_value
     difference = (to_value - from_value)
     percent_change = (difference / from_value)
     return percent_change
@@ -21,7 +21,11 @@ def organize_positions(positions, symbol_to_quote):
     for position in positions:
 
         influence = position['influence']
+        if influence == "Infinity":
+            influence = 0
+
         buy_order = position['buyOrder']
+        liable_players = position['liablePlayers']
         symbol = buy_order['symbol']
         buy_time = stockstream.order.find_execution_timestamp_for_order(buy_order)
 
@@ -46,7 +50,8 @@ def organize_positions(positions, symbol_to_quote):
                 "percent_change": percent_change,
                 "influence": influence,
                 "liability": liability,
-                "quote": quote
+                "quote": quote,
+                "liable_players": liable_players
             })
 
         else:
@@ -66,21 +71,22 @@ def organize_positions(positions, symbol_to_quote):
                 "difference": difference,
                 "percent_change": percent_change,
                 "liability": liability,
-                "influence": influence
+                "influence": influence,
+                "liable_players": liable_players
             })
+
+    influenced_orders['closed'] = list(reversed(influenced_orders['closed']))
 
     return influenced_orders
 
 
-def compute_player_profile(username):
-    positions = stockstream.api.get_positions_by_player(username)
-
+def assemble_positions(positions):
     symbols = set([position['buyOrder']['symbol'] for position in positions])
 
     symbol_to_quote = robinhood.api.get_symbol_to_quotes(symbols)
 
-    influenced_orders = stockstream.player.organize_positions(positions, symbol_to_quote)
-    profile_statistics = stockstream.player.get_profile_statistics(influenced_orders)
+    influenced_orders = stockstream.positions.organize_positions(positions, symbol_to_quote)
+    profile_statistics = stockstream.positions.get_profile_statistics(influenced_orders)
 
     print "Got influenced orders"
 

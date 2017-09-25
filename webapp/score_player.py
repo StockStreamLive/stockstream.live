@@ -51,7 +51,7 @@ i = 0
 def processUser(username):
     global i
     print i
-    profile = stockstream.player.compute_player_profile(username)
+    profile = stockstream.positions.assemble_positions(username)
     open("twitch/" + username.split(":")[1], "w").write(json.dumps(profile))
     i += 1
 

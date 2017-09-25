@@ -103,6 +103,12 @@ def get_positions_by_player(username):
     return positions
 
 
+def get_positions_by_symbol(symbol):
+    request = "/v1/positions/symbol/{}".format(symbol)
+    positions = get_api_request(request)
+    return positions
+
+
 def get_orders_by_player(username):
     request = "/v1/orders/player/{}".format(username)
     orders = get_api_request(request)

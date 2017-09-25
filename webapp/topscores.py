@@ -9,7 +9,7 @@ t_total = 0
 
 for f in files:
     profile = json.loads(open("twitch/"+f).read())
-    stats = stockstream.player.get_profile_statistics(profile)
+    stats = stockstream.positions.get_profile_statistics(profile)
     total = stats['realized_return'] + stats['unrealized_return']
     t_total += total
     print "{} {} {} {}".format(f, total, stats['realized_return'], stats['unrealized_return'])

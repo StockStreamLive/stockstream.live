@@ -33,7 +33,7 @@ body {
 }
 
 a {
-    color: #ff0ba8;
+    color: #00ffff;
 }
 
 a:visited {
@@ -52,6 +52,7 @@ table td{
     border: 1px dotted #ffffff;
     padding: 4px;
     text-align: center;
+    line-height: 1.4;
     font-size: 1em;
 }
 
@@ -65,6 +66,7 @@ table th{
     cursor: pointer; cursor: hand;
     font-size: 1.2em;
     background: black;
+    white-space: nowrap;
 }
 
 table th:hover {
