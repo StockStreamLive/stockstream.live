@@ -88,8 +88,6 @@ def assemble_positions(positions):
     influenced_orders = stockstream.positions.organize_positions(positions, symbol_to_quote)
     profile_statistics = stockstream.positions.get_profile_statistics(influenced_orders)
 
-    print "Got influenced orders"
-
     return {
         "influenced_orders": influenced_orders,
         "profile_statistics": profile_statistics

@@ -3,21 +3,19 @@ import json
 import locale
 import os
 from datetime import datetime
-import sys
 import bleach
 import web
-from twitch import TwitchClient
 import markdown
 
 from urllib import unquote
 import posixpath
-import urllib
 import stockstream
 import tradingview_api
 import robinhood
 import scrub
 from gunicorn.app.base import BaseApplication
-import multiprocessing
+import twitch_api
+
 
 import gunicorn.app.base
 
@@ -121,9 +119,7 @@ class Player:
     def GET(self, scoped_username):
         try:
             name = scoped_username.split(":")[1]
-            client = TwitchClient(client_id='ohlre6lyirmibqf5jhxz8taxnnc3m6')
-            users = client.users.translate_usernames_to_ids([name])
-            channel = client.channels.get_by_id(users[0]['id'])
+            channel = twitch_api.get_channel_for_user(name)
 
             render._keywords['globals']['model'] = {}
 

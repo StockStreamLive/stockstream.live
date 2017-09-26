@@ -162,7 +162,7 @@ $:render.elements.homelogo()
         $for order in player_profile['influenced_orders']['open']:
             $ symbol = order['symbol']
 
-            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y %H:%M:%S')
+            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y %H:%M')
 
             $ recent_price = order['recent_price']
             $ buy_price = order['buy_price']
@@ -205,8 +205,8 @@ $:render.elements.homelogo()
         $for order in player_profile['influenced_orders']['closed']:
             $ symbol = order['symbol']
 
-            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M:%S')
-            $ sell_time = datetime.fromtimestamp(order['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M:%S')
+            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
+            $ sell_time = datetime.fromtimestamp(order['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
 
             $ sell_price = order['sell_price']
             $ buy_price = order['buy_price']
