@@ -1,31 +1,29 @@
 $def with (symbol)
 
-$ orders = stockstream.api.get_orders_by_symbol(symbol)
-$ positions = stockstream.api.get_positions_by_symbol(symbol)
-$ instrument = robinhood.api.get_instrument_for_symbol(symbol)
-$ fundamentals = robinhood.api.get_fundamentals(symbol)
-$ market = tradingview_api.get_market_for_instrument(instrument)
-$ stats = stockstream.metrics.compute_stats_for_symbol(symbol)
+$ orders = model['orders']
+$ positions = model['positions']
+$ instrument = model['instrument']
+$ fundamentals = model['fundamentals']
+$ market = model['market']
+$ stats_for_symbol = model['stats_for_symbol']
+$ asset_stats = model['asset_stats']
 
-$ portfolio = stockstream.api.get_current_portfolio()
-$ asset_map = stockstream.portfolio.get_symbol_to_asset(portfolio)
+$ portfolio = model['portfolio']
+$ asset_map = model['asset_map']
 
-$ symbol_profile = stockstream.positions.assemble_positions(positions)
+$ symbol_profile = model['symbol_profile']
 
 $ pe_ratio = "{:.2f}".format(float(fundamentals['pe_ratio'])) if fundamentals['pe_ratio'] is not None else "-"
 $ dividend_yield = "{:.2f}".format(float(fundamentals['dividend_yield'])) if fundamentals['dividend_yield'] is not None else "-"
 $ market_cap = "$" + scrub.human_format(float(fundamentals['market_cap'])) if fundamentals['market_cap'] is not None else "-"
 
-$ dollar_change = stats['dollar_change']
-$ percent_change = stats['percent_change']
-$ percent_change_str = ("-" if percent_change < 0 else "+") + "{:.2f}".format(abs(percent_change)) + "%"
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
 
-<title>$:symbol $:percent_change_str $$$:stats['recent_price']</title>
+<title>$:symbol $:scrub.percent_change(stats_for_symbol['percent_change']) $$$:stats_for_symbol['recent_price']</title>
 
 $:render.elements.header()
 
@@ -77,50 +75,56 @@ $:render.elements.header()
 </head>
 <body>
 
+<hr>
+
 <br>
 <br>
 
 $:render.elements.homelogo()
-
-
 
 <center>
     <br>
     <hr>
     <h1>$:symbol</h1>
     <h3>$:instrument['name']</h3>
-    <span class="price">$$$:"{:.2f}".format(stats['recent_price'])</span>
-    <span class="$:("loss" if dollar_change < 0 else "profit")">$:("-" if dollar_change < 0 else "+")$$$:"{:.2f}".format(abs(dollar_change))</span>
-    <span class="$:("loss" if percent_change < 0 else "profit")">$:percent_change_str</span>
+    <span class="price">$:scrub.dollar_value(stats_for_symbol['recent_price'])</span>
+    <span class="$:("loss" if stats_for_symbol['dollar_change'] < 0 else "profit")">$:scrub.dollar_change(stats_for_symbol['dollar_change'])</span>
+    <span class="$:("loss" if stats_for_symbol['percent_change'] < 0 else "profit")">$:scrub.percent_change(stats_for_symbol['percent_change'])</span>
     <br>
     <br>
     <hr>
 
     $if symbol in asset_map:
         $ asset = asset_map[symbol]
-        <span class="holding">Own $:asset['shares'] of $:symbol at $$$:"{:.2f}".format(asset['avgCost'])</span>
+        $ asset_value_increase = asset_stats['dollar_change']
+        $ asset_percent_increase = asset_stats['percent_change']
+        <span class="holding">Own $:asset['shares'] of $:symbol at $:scrub.dollar_value(asset['avgCost'])</span>
+        <br>
+        <br>
+        <span class="$:("loss" if asset_value_increase < 0 else "profit")">$:scrub.dollar_change(asset_value_increase)</span>
+        <span class="$:("loss" if asset_percent_increase < 0 else "profit")">($:scrub.percent_change(asset_percent_increase))</span>
         <hr>
 
     <br>
     <table id="overview">
         <tbody id="overviewBody">
-        <tr><td>Shares Bought</td><td>$:stats['bought']</td></tr>
-        <tr><td>Shares Sold</td><td>$:stats['sold']</td></tr>
-        <tr><td>Total</td><td>$:(stats['bought'] + stats['sold'])</td></tr>
+        <tr><td>Shares Bought</td><td>$:stats_for_symbol['bought']</td></tr>
+        <tr><td>Shares Sold</td><td>$:stats_for_symbol['sold']</td></tr>
+        <tr><td>Total</td><td>$:(stats_for_symbol['bought'] + stats_for_symbol['sold'])</td></tr>
         <tr><td></td><td></td></tr>
-        <tr><td>Shares Owned</td><td>$:(stats['bought'] - stats['sold'])</td></tr>
-        <tr><td>Last Price</td><td>\$$:("{:.2f}".format(stats['recent_price']))</td></tr>
+        <tr><td>Shares Owned</td><td>$:max((stats_for_symbol['bought'] - stats_for_symbol['sold']),0)</td></tr>
+        <tr><td>Last Price</td><td>$:scrub.dollar_value(stats_for_symbol['recent_price'])</td></tr>
         <tr><td></td><td></td></tr>
-        <tr><td>Total Return</td><td>$:(locale.currency(stats['net'], grouping=True))</td></tr>
+        <tr><td>Total Return</td><td>$:(locale.currency(stats_for_symbol['net'], grouping=True))</td></tr>
         </tbody>
     </table>​
 
 
     <table id="fundamentals">
         <tbody id="fundamentalsBody">
-        <tr><td>Range Today</td><td>\$$:"{:.2f}".format(float(fundamentals['low'])) - \$$:"{:.2f}".format(float(fundamentals['high']))</td></tr>
-        <tr><td>52 Week Range</td><td>\$$:"{:.2f}".format(float(fundamentals['low_52_weeks'])) - \$$:"{:.2f}".format(float(fundamentals['high_52_weeks']))</td></tr>
-        <tr><td>Open</td><td>\$$:"{:.2f}".format(float(fundamentals['open']))</td></tr>
+        <tr><td>Range Today</td><td>$:scrub.dollar_value(float(fundamentals['low'])) - $:scrub.dollar_value(float(fundamentals['high']))</td></tr>
+        <tr><td>52 Week Range</td><td>$:scrub.dollar_value(float(fundamentals['low_52_weeks'])) - $:scrub.dollar_value(float(fundamentals['high_52_weeks']))</td></tr>
+        <tr><td>Open</td><td>$:scrub.dollar_value(float(fundamentals['open']))</td></tr>
         <tr><td>Market Cap</td><td>$:market_cap</td></tr>
         <tr><td>Volume/Average</td><td>$:scrub.human_format(float(fundamentals['volume']))/$:scrub.human_format(float(fundamentals['average_volume']))</td></tr>
         <tr><td>P/E Ratio</td><td>$:pe_ratio</td></tr>
@@ -130,7 +134,7 @@ $:render.elements.homelogo()
     <br>
     <hr>
 
-    <iframe src="https://www.tradingview.com/widgetembed/?symbol=$:market%3A$:symbol&amp;interval=5&amp;hidesidetoolbar=0&amp;symboledit=0&amp;saveimage=1&amp;toolbarbg=f1f3f6&amp;studies=%5B%5D&amp;hideideas=1&amp;theme=Dark&amp;style=2&amp;timezone=Etc%2FUTC&amp;withdateranges=1&amp;studies_overrides=%7B%7D&amp;overrides=%7B%7D&amp;enabled_features=%5B%5D&amp;disabled_features=%5B%5D&amp;locale=en&amp;utm_source=www.tradingview.com&amp;utm_medium=widget&amp;utm_campaign=chart&amp;utm_term=NASDAQ%3AAAPL" width="980" height="610" frameborder="0" allowtransparency="true" scrolling="no" allowfullscreen=""></iframe>
+    <iframe src="https://www.tradingview.com/widgetembed/?symbol=$:market%3A$:symbol&amp;interval=5&amp;hidesidetoolbar=0&amp;symboledit=0&amp;saveimage=1&amp;toolbarbg=f1f3f6&amp;studies=%5B%5D&amp;hideideas=1&amp;theme=Dark&amp;style=2&amp;timezone=Etc%2FUTC&amp;withdateranges=1&amp;studies_overrides=%7B%7D&amp;overrides=%7B%7D&amp;enabled_features=%5B%5D&amp;disabled_features=%5B%5D&amp;locale=en&amp;utm_source=www.tradingview.com&amp;utm_medium=widget&amp;utm_campaign=chart&amp;utm_term=NASDAQ%3AAAPL" width="75%" height="610" frameborder="0" allowtransparency="true" scrolling="no" allowfullscreen=""></iframe>
 
     <br>
 
@@ -172,8 +176,8 @@ $:render.elements.homelogo()
                 <td class="timestamp">$:buy_time</td>
                 <td>\$$:"{:.2f}".format(abs(buy_price))</td>
                 <td>\$$:"{:.2f}".format(abs(recent_price))</td>
-                <td><span class="$:("loss" if difference < 0 else "profit")">$:("-" if difference < 0 else "+")$$$:"{:.2f}".format(abs(difference))</span></td>
-                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:("-" if percent_change < 0 else "+")$:"{:.2f}".format(abs(percent_change))%</span></td>
+                <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
+                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
                 <td>
                     $for player in order['liable_players']:
                         <span><a href="/player/$player">$player.split(":")[1]</a></span>
@@ -213,10 +217,10 @@ $:render.elements.homelogo()
             <tr>
                 <td class="timestamp">$:buy_time</td>
                 <td class="timestamp">$:sell_time</td>
-                <td>\$$:"{:.2f}".format(abs(buy_price))</td>
-                <td>\$$:"{:.2f}".format(abs(sell_price))</td>
-                <td><span class="$:("loss" if difference < 0 else "profit")">$:("-" if difference < 0 else "+")$$$:"{:.2f}".format(abs(difference))</span></td>
-                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:("-" if percent_change < 0 else "+")$:"{:.2f}".format(abs(percent_change))%</span></td>
+                <td>$:scrub.dollar_value(buy_price)</td>
+                <td>$:scrub.dollar_value(sell_price)</td>
+                <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
+                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
                 <td>
                     $for player in order['liable_players']:
                         <span><a href="/player/$player">$player.split(":")[1]</a></span>

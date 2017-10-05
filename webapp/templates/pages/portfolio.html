@@ -1,25 +1,18 @@
 $def with ()
 
-$ portfolio = stockstream.api.get_current_portfolio()
-$ symbols = [asset['symbol'] for asset in portfolio['assets']]
-$ quote_map = robinhood.api.get_symbol_to_quotes(symbols)
-$ portfolio_value = stockstream.portfolio.compute_value(portfolio)
-$ orders = stockstream.api.get_orders_today()
-
-$ start_value = 50000.0
-$ free_shares = 500.0
-
-$ total_return_percent = (portfolio_value - (start_value + free_shares)) / (start_value + free_shares) * 100;
-$ total_return_dollars = (portfolio_value) - (start_value + free_shares);
+$ orders = model['orders']
+$ portfolio_stats = model['portfolio_stats']
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
+
+<title>Portfolio</title>
+
 $:render.elements.header()
 
 <style>
-
     .symbol a:hover {
         color: white;
         text-decoration: underline;
@@ -49,31 +42,23 @@ $:render.elements.header()
 
 <body>
 
-<br>
-<br>
-
-$:render.elements.homelogo()
-
 <center>
+
+    <br>
+    <br>
+
+    $:render.elements.homelogo()
+
     <br>
     <hr>
     <h1>Portfolio</h1>
     <hr>
     <br>
-    <br>
-    <table id="overview">
-        <tbody id="overviewBody">
-        <tr><td>Start Value</td><td>\$50000</td></tr>
-        <tr><td>Free Shares</td><td>+$500</td></tr>
-        <tr><td>Net Worth</td><td>\$$:"{:.2f}".format(abs(portfolio_value))</td></tr>
-        <tr><td>ROI $$</td><td><span class="$:("loss" if total_return_dollars < 0 else "profit")">$:("-" if total_return_dollars < 0 else "+")$$$:"{:.2f}".format(abs(total_return_dollars))</td></tr>
-        <tr><td>ROI %</td><td><span class="$:("loss" if total_return_percent < 0 else "profit")">$:("-" if total_return_percent < 0 else "+")$:"{:.2f}".format(abs(total_return_percent))%</span></td></tr>
-        <tr><td>Age</td><td>$:stockstream.metrics.get_days_old() days</td></tr>
-        </tbody>
-    </table>​
-    <br>
+
+    $:render.elements.order_stats()
+
     <hr>
-    <span class="balance">Cash: $$$:"{:.2f}".format(abs(portfolio['cashBalance']))</span>
+    <span class="balance">Cash: $:scrub.dollar_value(portfolio_stats['cash_balance'])</span>
     <br>
     <hr>
     <br>
@@ -97,7 +82,7 @@ $:render.elements.homelogo()
                 <td class="symbol"><a href="/symbol/$:order['symbol']">$:order['symbol']</a></td>
                 <td>$:order['side']</td>
                 <td>$:order['quantity']</td>
-                <td>\$$:"{:.2f}".format(abs(order['limit']))</td>
+                <td>$:scrub.dollar_value(order['limit'])</td>
                 <td>$:status</td>
             </tr>
         </tbody>
@@ -122,34 +107,34 @@ $:render.elements.homelogo()
         </tr>
         </thead>
         <tbody id="assetsBody">
-        $for asset in portfolio['assets']:
-            $ quote = quote_map[asset['symbol']]
-            $ shares = asset['shares']
-            $ avg_cost = asset['avgCost']
-            $ recent_price = robinhood.quote.most_recent_price(quote)
+        $for symbol in portfolio_stats['asset_stats']:
+            $ asset_stat = portfolio_stats['asset_stats'][symbol]
+            $ avg_cost = asset_stat['avg_cost']
 
-            $ dollar_change = recent_price - avg_cost
-            $ percent_change = (dollar_change / avg_cost * 100)
+            $ recent_price = asset_stat['recent_price']
+            $ shares = asset_stat['shares']
 
-            $ total_cost = shares * avg_cost
-            $ total_value = shares * recent_price
-            $ total_dollar_return = total_value - total_cost
+            $ dollar_change = asset_stat['dollar_change']
+            $ percent_change = asset_stat['percent_change']
 
-            $ percent_portfolio = (total_value / portfolio_value) * 100
+            $ total_cost = asset_stat['total_cost']
+            $ total_value = asset_stat['total_value']
+            $ total_dollar_return = asset_stat['total_dollar_return']
 
-            $ percent_change_today = robinhood.quote.percent_change_today(quote)
+            $ percent_portfolio = asset_stat['weight']
+            $ percent_change_today = asset_stat['percent_change_today']
             <tr>
-            <td class="symbol"><a href="/symbol/$:asset['symbol']">$:asset['symbol']</a></td>
+            <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
             <td>$:shares</td>
-            <td>$$$:"{:.2f}".format(abs(avg_cost))</td>
-            <td>$$$:"{:.2f}".format(abs(recent_price))</td>
-            <td><span class="$:("loss" if dollar_change < 0 else "profit")">$:("-" if dollar_change < 0 else "+")$$$:"{:.2f}".format(abs(dollar_change))</span></td>
-            <td><span class="$:("loss" if percent_change < 0 else "profit")">$:("-" if percent_change < 0 else "+")$:"{:.2f}".format(abs(percent_change))%</span></td>
-            <td>$$$:"{:.2f}".format(abs(total_cost))</td>
-            <td>$$$:"{:.2f}".format(abs(total_value))</td>
-            <td><span class="$:("loss" if total_dollar_return < 0 else "profit")">$:("-" if total_dollar_return < 0 else "+")$$$:"{:.2f}".format(abs(total_dollar_return))</span></td>
-            <td>$:"{:.2f}".format(abs(percent_portfolio))%</td>
-            <td><span class="$:("loss" if percent_change_today < 0 else "profit")">$:("-" if percent_change_today < 0 else "+")$:"{:.2f}".format(abs(percent_change_today))%</span></td>
+            <td>$:scrub.dollar_value(avg_cost)</td>
+            <td>$:scrub.dollar_value(recent_price)</td>
+            <td><span class="$:("loss" if dollar_change < 0 else "profit")">$:scrub.dollar_change(dollar_change)</span></td>
+            <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
+            <td>$:scrub.dollar_value(total_cost)</td>
+            <td>$:scrub.dollar_value(total_value)</td>
+            <td><span class="$:("loss" if total_dollar_return < 0 else "profit")">$:scrub.dollar_change(total_dollar_return)</span></td>
+            <td>$:scrub.percent_value(percent_portfolio)</td>
+            <td><span class="$:("loss" if percent_change_today < 0 else "profit")">$:scrub.percent_change(percent_change_today)</span></td>
             </tr>
         </tbody>
     </table>​

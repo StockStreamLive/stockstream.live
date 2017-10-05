@@ -1,0 +1,46 @@
+$def with ()
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+$:render.elements.header()
+</head>
+
+<body>
+
+<center>
+
+    <br>
+
+    $:render.elements.homelogo()
+
+    <hr>
+    <br>
+
+    $:render.elements.portfolio_scatter_chart()
+
+    <hr>
+
+    <h2>Portfolio Value Over Time</h2>
+
+    <br>
+    <div style="width:90%;">
+        $:render.elements.portfolio_graph()
+    </div>
+
+    <hr>
+
+    <h2>Portfolio Holdings</h2>
+
+    <br>
+    <div style="width:75%">
+        $:render.elements.portfolio_weight_chart()
+    </div>
+
+    $:render.elements.footer()
+
+</center>
+
+</body>
+
+</html>

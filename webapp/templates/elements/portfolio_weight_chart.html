@@ -1,0 +1,39 @@
+$def with ()
+
+$ portfolio_stats = model['portfolio_stats']
+
+<script>
+    jQuery(window).on('load', function() {
+            var config = {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: [
+                        $for symbol in portfolio_stats['asset_stats']:
+                            "$:"{:.2f}".format(abs(portfolio_stats['asset_stats'][symbol]['total_value']))",
+                    ],
+                    backgroundColor: [
+                        $for symbol in portfolio_stats['asset_stats']:
+                            genRandomColor(),
+                    ],
+                    label: 'Dataset 1'
+                }],
+                labels: [
+                    $for symbol in portfolio_stats['asset_stats']:
+                        "$:symbol",
+                ]
+            },
+            options: {
+                responsive: true
+            }
+        };
+
+        var ctx = document.getElementById("value_chart").getContext("2d");
+        window.myPie = new Chart(ctx, config);
+    });
+</script>
+
+<canvas id="value_chart"></canvas>
+
+
+

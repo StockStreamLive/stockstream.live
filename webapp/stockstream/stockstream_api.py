@@ -2,12 +2,6 @@ import config
 import robinhood
 import time
 import httputil
-import s3util
-import json
-
-
-def get_profile_by_player(player):
-    return json.loads(s3util.read_file_data("api.stockstream.live", "profile/" + player.replace(":", "/")))
 
 
 def get_api_request(request):
@@ -17,6 +11,12 @@ def get_api_request(request):
 def get_current_portfolio():
     portfolio = get_api_request("/v1/portfolio/current")
     return portfolio
+
+
+def get_portfolio_values():
+    values = get_api_request("/v1/portfolio/values")
+    values = sorted(values, key=lambda k: k['date'])
+    return values
 
 
 def get_votes_by_symbol(symbol):
@@ -97,6 +97,12 @@ def get_orders_by_symbol(symbol):
     return orders
 
 
+def get_order_stats():
+    request = "/v1/orders/stats"
+    stats = get_api_request(request)
+    return stats
+
+
 def get_positions_by_player(username):
     request = "/v1/positions/player/{}".format(username)
     positions = get_api_request(request)
@@ -138,6 +144,10 @@ def get_orders_by_date_by_symbol(dateStr, symbol):
 
 def get_votes_by_user(username):
     return get_api_request("/v1/votes/player/{}".format(username))
+
+
+def get_ranked_players():
+    return get_api_request("/v1/players")
 
 
 def get_portfolio():

@@ -1,0 +1,64 @@
+$def with ()
+
+$ portfolio_stats = stockstream.portfolio.compute_portfolio_statistics()
+
+<div style="width:75%">
+    <canvas id="canvas"></canvas>
+</div>
+
+<script>
+    var labels = [
+                $for symbol in portfolio_stats['asset_stats']:
+                    "$:symbol",
+                ]
+
+    var scatterChartData = {
+        datasets: [{
+            label: "Assets | X - Percent Change | Y - Percent Change Today",
+            borderColor: "cyan",
+            pointRadius: 10,
+            pointHoverRadius: 12,
+            data: [
+                $for symbol in portfolio_stats['asset_stats']:
+                    $ percent_change = portfolio_stats['asset_stats'][symbol]['percent_change']
+                    $ percent_change_today = portfolio_stats['asset_stats'][symbol]['percent_change_today']
+                    {x: $:"{:.2f}".format(percent_change) , y: $:"{:.2f}".format(percent_change_today) },
+            ]
+        }]
+    };
+
+    window.onload = function() {
+        var ctx = document.getElementById("canvas").getContext("2d");
+        window.myScatter = Chart.Scatter(ctx, {
+            data: scatterChartData,
+            options: {
+                title: {
+                    display: false,
+                    text: ''
+                },
+                tooltips: {
+                    callbacks: {
+                        label: function(tooltipItem, data) {
+                            var label = labels[tooltipItem.index];
+                            return label + ': (' + tooltipItem.xLabel + '%, ' + tooltipItem.yLabel + '% today)';
+                        }
+                    }
+                },
+                scales: {
+                    xAxes: [{
+                                gridLines: {
+                                    color: "rgba(0, 128, 128, .5)",
+                                }
+                            }],
+                    yAxes: [{
+                                gridLines: {
+                                    color: "rgba(0, 128, 128, .5)",
+                                }
+                            }]
+                }
+            },
+
+        });
+    };
+
+</script>
