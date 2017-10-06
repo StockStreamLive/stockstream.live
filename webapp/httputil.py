@@ -1,13 +1,20 @@
 import requests
 import traceback
 from expiringdict import ExpiringDict
+import os
 
-url_cache = ExpiringDict(max_len=200, max_age_seconds=150)
+
+max_cache_items = os.environ['CACHE_SIZE']
+max_cache_age = os.environ['CACHE_AGE']
+
+url_cache = ExpiringDict(max_len=max_cache_items, max_age_seconds=max_cache_age)
 
 
 def get_json_object_from_url(url):
     if url in url_cache:
         return url_cache[url]
+
+    print "Retrieving url: " + url
 
     try:
         returned_object = requests.get(url)

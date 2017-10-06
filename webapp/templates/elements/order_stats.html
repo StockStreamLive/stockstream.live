@@ -1,0 +1,41 @@
+$def with ()
+
+$ order_stats = model['order_stats']
+
+$ portfolio_values = model['portfolio_values']
+$ portfolio_stats = model['portfolio_stats']
+$ portfolio_value = portfolio_stats['portfolio_value']
+
+$ start_value = portfolio_values[0]['startValue']
+
+$ total_return_percent = (portfolio_value - start_value) / start_value * 100
+$ total_return_dollars = portfolio_value - start_value
+
+<style>
+    #overviewBody td:nth-child(1) {
+        color: white;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+        text-shadow:
+            -2px -2px 0 #1b2840,
+            1px -1px 0 #1b2840,
+            -1px 1px 0 #1b2840,
+            1px 1px 0 #1b2840;
+        filter: drop-shadow(0px 0px 2px red);
+    }
+</style>
+
+<br>
+
+<br>
+<table id="overview">
+    <tbody id="overviewBody">
+        <tr><td>Total Bought</td><td>$:'${:,.2f}'.format(order_stats['totalPurchasedAmount'])</td></tr>
+        <tr><td>Total Sold</td><td>$:'${:,.2f}'.format(order_stats['totalSoldAmount'])</td></tr>
+        <tr><td>Start Value</td><td>$:'${:,.2f}'.format(start_value)</td></tr>
+        <tr><td>Current Value</td><td>$:'${:,.2f}'.format(portfolio_value)</td></tr>
+        <tr><td>ROI $$</td><td><span class="$:("loss" if total_return_dollars < 0 else "profit")">$:scrub.dollar_change(total_return_dollars)</td></tr>
+        <tr><td>ROI %</td><td><span class="$:("loss" if total_return_percent < 0 else "profit")">$:scrub.percent_change(total_return_percent)</span></td></tr>
+        <tr><td>Age</td><td>$:stockstream.metrics.get_days_old() days</td></tr>
+    </tbody>
+</table>​
+<br>

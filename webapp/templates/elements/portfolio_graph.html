@@ -1,0 +1,72 @@
+$def with ()
+
+$ portfolio_values = model['portfolio_values'][:-1]
+$ today_value = model['portfolio_values'][-1]["fiveMinValues"][-1]['adjusted_close_equity']
+$ today_date = datetime.now().strftime("%m/%d/%Y")
+
+<script>
+    jQuery(window).on('load', function() {
+        var config = {
+            type: 'line',
+            data: {
+                labels: [
+                    $for value in portfolio_values:
+                        "$:value['date']",
+                    "$:today_date"
+                ],
+                datasets: [{
+                    label: "Total Portfolio Value",
+                    backgroundColor: "cyan",
+                    borderColor: "cyan",
+                    data: [
+                        $for value in portfolio_values:
+                            $:value['endValue'],
+                        $:today_value
+                    ],
+                    fill: false,
+                }]
+            },
+            options: {
+                legend: {
+                    fontColor: "white",
+                },
+                elements: { line: { tension: 0.000001 }, point: { radius: 0 } },
+
+                responsive: true,
+                title:{
+                    display: false,
+                },
+                tooltips: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                hover: {
+                    mode: 'nearest',
+                    intersect: true
+                },
+                scales: {
+                    xAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Date'
+                        }
+                    }],
+                    yAxes: [{
+                        display: true,
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Value'
+                        }
+                    }]
+                }
+            }
+        };
+
+        var ctx = document.getElementById("weight_chart").getContext("2d");
+        window.myLine = new Chart(ctx, config);
+    });
+</script>
+
+<canvas id="weight_chart"></canvas>
+

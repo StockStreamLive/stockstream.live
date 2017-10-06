@@ -1,0 +1,34 @@
+$def with ()
+
+$ top_players_list = model['top_players_list']
+
+<style>
+    .top_playerbox {
+        display: inline-block;
+    }
+</style>
+
+<center>
+    $for player in top_players_list:
+        $ player_name = player['username']
+        $ profile_stats = player['profile_statistics']
+        <div class="top_playerbox">
+            <table id="overview">
+                <tbody id="overviewBody">
+                <tr><td colspan="2"><a href="/player/$:player_name"><h2>$:player_name.split(":")[-1]</h2></a></td></tr>
+                <tr><td>Profitable Trades</td><td>$:profile_stats['profitable_trades']</td></tr>
+                <tr><td>Unprofitable Trades</td><td>$:profile_stats['unprofitable_trades']</td></tr>
+                <tr><td>% Profitable</td><td>$:scrub.percent_value(profile_stats['percent_profitable'])</td></tr>
+                <tr><td>Trades Influenced</td><td>$:profile_stats['total_influenced']</td></tr>
+                <tr>
+                    <td>Realized Return</td>
+                    <td><span class="$:("loss" if profile_stats['realized_return'] < 0 else "profit")">$:scrub.dollar_change(profile_stats['realized_return'])</span></td>
+                </tr>
+                <tr>
+                    <td>Percent Return</td>
+                    <td><span class="$:("loss" if profile_stats['total_percent_return'] < 0 else "profit")">$:scrub.percent_change(profile_stats['total_percent_return'])</span></td>
+                </tr>
+                </tbody>
+            </table>​
+        </div>
+</center>

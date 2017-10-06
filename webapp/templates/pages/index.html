@@ -11,20 +11,31 @@ $:render.elements.header()
         height: 90px;
         margin: 10px;
         border-style: none;
-        margin-top: 60px;
+        margin-left: 60px;
         margin-bottom: 10px;
         transition: all .05s ease;
+        display: flex;
+        align-items: center;
+    }
+
+    .side_link {
+        display: flex;
+        align-items: center;
+        height: 90px;
     }
 
     .follow:hover {
         transform: scale(1.2);
     }
 
+    .social_media_container {
+        margin-left: 60px;
+    }
 
     .social_media {
         overflow: hidden;
         height: 45px;
-        margin: 10px;
+        margin-left: 1px;
         border-style: none;
         margin-top: 20px;
         margin-bottom: 10px;
@@ -34,7 +45,6 @@ $:render.elements.header()
     .social_media:hover {
         transform: scale(1.2);
     }
-
 
     #twitchlogo {
         filter: drop-shadow(0px 0px 15px #6441A4);
@@ -76,10 +86,6 @@ $:render.elements.header()
         filter: drop-shadow(0px 0px 25px #7289da);
     }
 
-    #ponyexpress {
-        color: #ff69b4;
-    }
-
     .cheddar {
         color: #ff0ba8;
     }
@@ -88,19 +94,20 @@ $:render.elements.header()
         margin-top: 80px;
         margin-bottom: 60px;
         white-space: nowrap;
-        display: inline-block;
+        display: inline-flex;
     }
 
     .chat {
         box-shadow: 0px 0px 100px #ff0ba8;
-        display: inline-block;
+        display: inline-flex;
         margin: 0px;
+        margin-left: 20px;
         padding: 0px;
     }
 
     .player {
         box-shadow: 0px 0px 100px #ff0ba8;
-        display: inline-block;
+        display: inline-flex;
         margin-right: 10px;
         padding: 0px;
     }
@@ -121,18 +128,17 @@ $:render.elements.header()
         filter: drop-shadow(0px 0px 25px yellow);
     }
 
-    #wikilogo {
-        filter: drop-shadow(0px 0px 15px teal);
+    #chartslogo {
+        filter: drop-shadow(0px 0px 15px red);
     }
 
-    #wikilogo:hover {
-        filter: drop-shadow(0px 0px 25px teal);
+    #chartslogo:hover {
+        filter: drop-shadow(0px 0px 25px red);
     }
 
     #heading {
         margin-top: 40px;
     }
-
 </style>
 
 </head>
@@ -142,9 +148,7 @@ $:render.elements.header()
 
 <center>
 
-    <h1>World's First Multiplayer Stock Market Game Using Real Money</h1>
-
-    <br>
+    <h2>World's First Multiplayer Stock Market Game Using Real Money</h2>
 
     <div class="gamebox">
         <iframe class="player"
@@ -164,19 +168,46 @@ $:render.elements.header()
                 height="509"
                 width="350">
         </iframe>
+
+        <div>
+            <a href="/portfolio" class="side_link"><img id="portfoliologo" class="follow" src="/static/plaque-portfolio.png"/></a>
+            <br>
+            <br>
+            <a href="/charts" class="side_link"><img id="chartslogo" class="follow" src="/static/plaque-charts.png"/></a>
+            <br>
+
+            <div class="social_media_container">
+                <a target="_blank" href="https://twitch.tv/stockstream"><img id="twitchlogo" class="social_media" src="/static/twitch-logo.png"/></a>
+                <a target="_blank" href="https://twitter.com/stockstream"><img id="twitterlogo" class="social_media" src="/static/twtr-logo.png"/></a>
+                <a target="_blank" href="https://stocktwits.com/stockstream"><img id="stocktwitslogo" class="social_media" src="/static/stocktwits-logo.png"/></a>
+                <a target="_blank" href="https://discord.gg/xnrKgEj"><img id="discordlogo" class="social_media" src="/static/discord-logo.png"/></a>
+            </div>
+
+        </div>
+
     </div>
 
     <br>
-
-    <a target="_blank" href="https://twitch.tv/stockstream"><img id="twitchlogo" class="social_media" src="/static/twitch-logo.png"/></a>
-    <a target="_blank" href="https://twitter.com/stockstream"><img id="twitterlogo" class="social_media" src="/static/twtr-logo.png"/></a>
-    <a target="_blank" href="https://stocktwits.com/stockstream"><img id="stocktwitslogo" class="social_media" src="/static/stocktwits-logo.png"/></a>
-    <a target="_blank" href="https://discord.gg/xnrKgEj"><img id="discordlogo" class="social_media" src="/static/discord-logo.png"/></a>
-
-    <br>
+    $:render.elements.order_stats()
+    <hr>
     <br>
 
-    <a href="/portfolio"><img id="portfoliologo" class="follow" src="/static/plaque-portfolio.png"/></a>
+    <h2>Portfolio Value Over Time</h2>
+
+    <br>
+
+    <div style="width:85%;">
+        $:render.elements.portfolio_graph()
+    </div>
+
+    <hr>
+
+    <h2>Top Players</h2>
+    <br>
+
+    <div style="width:85%;">
+        $:render.elements.top_players()
+    </div>
 
     $:render.elements.footer()
 

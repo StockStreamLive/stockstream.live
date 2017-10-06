@@ -18,6 +18,7 @@ h1 {
 
 h2 {
     color: white;
+    line-height: 1.5;
     text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
     text-shadow:
         -4px -4px 0 #1b2840,
@@ -29,7 +30,8 @@ h2 {
 
 body {
     background-color: black;
-    height: 97%;
+    height: 100%;
+    margin: 0px;
 }
 
 a {

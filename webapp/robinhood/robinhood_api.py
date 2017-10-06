@@ -1,5 +1,6 @@
 import requests
 import httputil
+import traceback
 
 
 def get_symbol_to_quotes(symbols):
@@ -7,9 +8,11 @@ def get_symbol_to_quotes(symbols):
     try:
         quotes = httputil.get_json_object_from_url("https://api.robinhood.com/quotes/?symbols={}".format(",".join(symbols)))['results']
         for quote in quotes:
-            symbol_to_quote[quote['symbol']] = quote
+            if quote:
+                symbol_to_quote[quote['symbol']] = quote
     except Exception as e:
-        print e
+        traceback.print_exc()
+        print "ERROR: " + `e`
     return symbol_to_quote
 
 
