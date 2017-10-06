@@ -15,8 +15,14 @@ $ symbol_profile = model['symbol_profile']
 
 $ pe_ratio = "{:.2f}".format(float(fundamentals['pe_ratio'])) if fundamentals['pe_ratio'] is not None else "-"
 $ dividend_yield = "{:.2f}".format(float(fundamentals['dividend_yield'])) if fundamentals['dividend_yield'] is not None else "-"
-$ market_cap = "$" + scrub.human_format(float(fundamentals['market_cap'])) if fundamentals['market_cap'] is not None else "-"
-
+$ market_cap = "$" + scrub.human_format(float(fundamentals['market_cap']))
+$ low = scrub.dollar_value(fundamentals['low'])
+$ high = scrub.dollar_value(fundamentals['high'])
+$ low_52_weeks = scrub.dollar_value(fundamentals['low_52_weeks'])
+$ high_52_weeks = scrub.dollar_value(fundamentals['high_52_weeks'])
+$ open = scrub.dollar_value(fundamentals['open'])
+$ volume = scrub.human_format(fundamentals['volume'])
+$ average_volume = scrub.human_format(fundamentals['average_volume'])
 
 <!DOCTYPE html>
 <html lang="en">
@@ -122,11 +128,11 @@ $:render.elements.homelogo()
 
     <table id="fundamentals">
         <tbody id="fundamentalsBody">
-        <tr><td>Range Today</td><td>$:scrub.dollar_value(float(fundamentals['low'])) - $:scrub.dollar_value(float(fundamentals['high']))</td></tr>
-        <tr><td>52 Week Range</td><td>$:scrub.dollar_value(float(fundamentals['low_52_weeks'])) - $:scrub.dollar_value(float(fundamentals['high_52_weeks']))</td></tr>
-        <tr><td>Open</td><td>$:scrub.dollar_value(float(fundamentals['open']))</td></tr>
+        <tr><td>Range Today</td><td>$:low - $:high</td></tr>
+        <tr><td>52 Week Range</td><td>$:low_52_weeks - $:high_52_weeks</td></tr>
+        <tr><td>Open</td><td>$:open</td></tr>
         <tr><td>Market Cap</td><td>$:market_cap</td></tr>
-        <tr><td>Volume/Average</td><td>$:scrub.human_format(float(fundamentals['volume']))/$:scrub.human_format(float(fundamentals['average_volume']))</td></tr>
+        <tr><td>Volume/Average</td><td>$:volume/$:average_volume</td></tr>
         <tr><td>P/E Ratio</td><td>$:pe_ratio</td></tr>
         <tr><td>Dividend/Yield</td><td>$:dividend_yield</td></tr>
         </tbody>

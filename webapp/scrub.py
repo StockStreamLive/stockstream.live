@@ -1,5 +1,11 @@
 
 def human_format(num):
+    if num is None:
+        return "-"
+
+    if isinstance(num, basestring):
+        num = float(num)
+
     magnitude = 0
     while abs(num) >= 1000:
         magnitude += 1
@@ -8,6 +14,12 @@ def human_format(num):
 
 
 def dollar_value(num):
+    if num is None:
+        return "-"
+
+    if isinstance(num, basestring):
+        num = float(num)
+
     return "$" + "{:.2f}".format(abs(num))
 
 
