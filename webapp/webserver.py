@@ -133,7 +133,9 @@ class Symbol:
         portfolio_value = stockstream.portfolio.compute_value(portfolio)
         quote = robinhood.api.get_quote(symbol)
 
-        asset_stats = stockstream.portfolio.compute_asset_stats(asset_map[symbol], portfolio_value, quote)
+        asset_stats = {}
+        if symbol in asset_map:
+            asset_stats = stockstream.portfolio.compute_asset_stats(asset_map[symbol], portfolio_value, quote)
 
         render._keywords['globals']['model'] = {
             'orders': stockstream.api.get_orders_by_symbol(symbol),
