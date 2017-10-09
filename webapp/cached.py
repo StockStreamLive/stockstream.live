@@ -9,10 +9,14 @@ class cached(object):
 
     def __call__(self, func):
         def inner(*args, **kwargs):
+            param = args[1]
             max_age = kwargs.get('max_age', self.default_max_age)
-            if not max_age or func not in self.cached_function_responses or (datetime.now() - self.cached_function_responses[func]['fetch_time'] > max_age):
-                if 'max_age' in kwargs: del kwargs['max_age']
+            if func not in self.cached_function_responses:
+                self.cached_function_responses[func] = {}
+            if not max_age or param not in self.cached_function_responses[func] or (datetime.now() - self.cached_function_responses[func][param]['fetch_time'] > max_age):
+                if 'max_age' in kwargs:
+                    del kwargs['max_age']
                 res = func(*args, **kwargs)
-                self.cached_function_responses[func] = {'data': res, 'fetch_time': datetime.now()}
-            return self.cached_function_responses[func]['data']
+                self.cached_function_responses[func][param] = {'data': res, 'fetch_time': datetime.now()}
+            return self.cached_function_responses[func][param]['data']
         return inner
