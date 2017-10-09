@@ -1,11 +1,11 @@
-
 import json
 import locale
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import bleach
 import web
 import markdown
+from cached import cached
 
 from urllib import unquote
 import posixpath
@@ -45,25 +45,6 @@ urls = (
     '/*(.+)', 'Index'
 )
 
-
-model_cache = ExpiringDict(max_len=1, max_age_seconds=60)
-def load_display_model():
-    model = model_cache['model'] if 'model' in model_cache else None
-
-    if not model:
-        model = {
-                'portfolio_values': stockstream.api.get_portfolio_values(),
-                'portfolio_stats': stockstream.portfolio.compute_portfolio_statistics(),
-                'order_stats': stockstream.api.get_order_stats(),
-                'top_players_list': stockstream.players.get_top_players_list(),
-                'orders': stockstream.api.get_orders_today(),
-            }
-
-    model_cache['model'] = model
-
-    return model
-
-
 class StockStreamWebApp(web.application):
     def run(self, *middleware):
         port = 8080
@@ -72,7 +53,7 @@ class StockStreamWebApp(web.application):
         func = self.wsgifunc(*middleware)
         return web.httpserver.runsimple(func, ('0.0.0.0', port))
 
-render = web.template.render('templates/', globals=t_globals)
+render = web.template.render('templates/', globals=t_globals, cache=False)
 render._keywords['globals']['render'] = render
 
 
@@ -94,6 +75,7 @@ class Info:
     def POST(self, url):
         raise web.seeother('/')
 
+    @cached()
     def GET(self, page):
         markdown_converter = markdown.Markdown(output_format='html4')
         info_file = 'markdown/{}.markdown'.format(page)
@@ -110,8 +92,13 @@ class Charts:
     def POST(self, url):
         raise web.seeother('/')
 
+    @cached()
     def GET(self, url):
-        render._keywords['globals']['model'] = load_display_model()
+        render._keywords['globals']['model'] = {
+                'portfolio_values': stockstream.api.get_portfolio_values(),
+                'portfolio_stats': stockstream.portfolio.compute_portfolio_statistics(),
+                'orders': stockstream.api.get_orders_today(),
+            }
 
         return render.pages.charts()
 
@@ -123,6 +110,7 @@ class Symbol:
     def POST(self, url):
         raise web.seeother('/')
 
+    @cached()
     def GET(self, symbol):
         symbol = symbol.upper()
 
@@ -162,6 +150,7 @@ class Player:
     def POST(self, url):
         raise web.seeother('/')
 
+    @cached()
     def GET(self, scoped_username):
         scoped_username = scoped_username.lower()
         name = scoped_username.split(":")[1]
@@ -191,11 +180,20 @@ class Portfolio:
     def POST(self, url):
         raise web.seeother('/')
 
+    @cached()
     def GET(self, url):
 
-        render._keywords['globals']['model'] = load_display_model()
+        render._keywords['globals']['model'] = {
+                'portfolio_values': stockstream.api.get_portfolio_values(),
+                'portfolio_stats': stockstream.portfolio.compute_portfolio_statistics(),
+                'order_stats': stockstream.api.get_order_stats(),
+                'orders': stockstream.api.get_orders_today(),
+            }
 
-        return render.pages.portfolio()
+        page = render.pages.portfolio()
+
+
+        return page
 
 
 class Index:
@@ -205,11 +203,20 @@ class Index:
     def POST(self, url):
         raise web.seeother('/')
 
+    @cached()
     def GET(self, url):
 
-        render._keywords['globals']['model'] = load_display_model()
+        render._keywords['globals']['model'] = {
+                'portfolio_values': stockstream.api.get_portfolio_values(),
+                'portfolio_stats': stockstream.portfolio.compute_portfolio_statistics(),
+                'order_stats': stockstream.api.get_order_stats(),
+                'top_players_list': stockstream.players.get_top_players_list(),
+                'orders': stockstream.api.get_orders_today(),
+            }
 
-        return render.pages.index()
+        page = render.pages.index()
+
+        return page
 
 
 class StaticMiddleware:
