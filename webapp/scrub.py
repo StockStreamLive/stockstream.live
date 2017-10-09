@@ -13,6 +13,16 @@ def human_format(num):
     return '%.2f%s' % (num, ['', 'K', 'M', 'B'][magnitude])
 
 
+def decimal_value(num):
+    if num is None:
+        return "-"
+
+    if isinstance(num, basestring):
+        num = float(num)
+
+    return "{:.2f}".format(num)
+
+
 def dollar_value(num):
     if num is None:
         return "-"

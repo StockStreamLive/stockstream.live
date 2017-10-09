@@ -13,9 +13,9 @@ $ asset_map = model['asset_map']
 
 $ symbol_profile = model['symbol_profile']
 
-$ pe_ratio = "{:.2f}".format(float(fundamentals['pe_ratio'])) if fundamentals['pe_ratio'] is not None else "-"
-$ dividend_yield = "{:.2f}".format(float(fundamentals['dividend_yield'])) if fundamentals['dividend_yield'] is not None else "-"
-$ market_cap = "$" + scrub.human_format(float(fundamentals['market_cap']))
+$ pe_ratio = scrub.decimal_value(fundamentals['pe_ratio'])
+$ dividend_yield = scrub.decimal_value(fundamentals['dividend_yield'])
+$ market_cap = "$" + scrub.human_format(fundamentals['market_cap'])
 $ low = scrub.dollar_value(fundamentals['low'])
 $ high = scrub.dollar_value(fundamentals['high'])
 $ low_52_weeks = scrub.dollar_value(fundamentals['low_52_weeks'])
