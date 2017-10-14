@@ -1,5 +1,7 @@
 import stockstream
 import robinhood
+from calendar import timegm
+from dateutil.parser import parse
 
 
 def compute_change_decimal(from_value, to_value):
@@ -9,6 +11,12 @@ def compute_change_decimal(from_value, to_value):
     difference = (to_value - from_value)
     decimal_change = (difference / from_value)
     return decimal_change
+
+
+def compute_cost(order):
+    if 'average_price' in order and order['average_price'] is not None:
+        return float(order['average_price'])
+    return float(order['price'])
 
 
 def organize_positions(positions, symbol_to_quote):
@@ -28,6 +36,7 @@ def organize_positions(positions, symbol_to_quote):
         liable_players = position['liablePlayers']
         symbol = buy_order['symbol']
         buy_time = stockstream.order.find_execution_timestamp_for_order(buy_order)
+        buy_price = compute_cost(buy_order)
 
         if 'sellOrder' not in position or position['sellOrder'] is None:
 
@@ -37,14 +46,17 @@ def organize_positions(positions, symbol_to_quote):
                 continue
 
             recent_price = robinhood.quote.most_recent_price(quote)
-            difference = (recent_price - buy_order['price'])
-            percent_change = compute_change_decimal(buy_order['price'], recent_price) * 100
+            difference = (recent_price - buy_price)
+            percent_change = compute_change_decimal(buy_price, recent_price) * 100
             liability = difference * influence
+
+            timestamp = parse(buy_order['created_at'])
+            timestamp = timegm(timestamp.timetuple()) * 1000
 
             influenced_orders['open'].append({
                 "symbol": symbol,
-                "buy_time": buy_order['timestamp'],
-                "buy_price": buy_order['price'],
+                "buy_time": timestamp,
+                "buy_price": buy_price,
                 "recent_price": recent_price,
                 "difference": difference,
                 "percent_change": percent_change,
@@ -56,9 +68,10 @@ def organize_positions(positions, symbol_to_quote):
 
         else:
             sell_order = position['sellOrder']
+            sell_price = compute_cost(sell_order)
 
-            difference = sell_order['price'] - buy_order['price']
-            percent_change = compute_change_decimal(buy_order['price'], sell_order['price']) * 100
+            difference = sell_price - buy_price
+            percent_change = compute_change_decimal(buy_price, sell_price) * 100
             sell_time = stockstream.order.find_execution_timestamp_for_order(sell_order)
             liability = influence * difference
 
@@ -66,8 +79,8 @@ def organize_positions(positions, symbol_to_quote):
                 "symbol": symbol,
                 "buy_time": buy_time,
                 "sell_time": sell_time,
-                "buy_price": buy_order['price'],
-                "sell_price": sell_order['price'],
+                "buy_price": buy_price,
+                "sell_price": sell_price,
                 "difference": difference,
                 "percent_change": percent_change,
                 "liability": liability,
@@ -113,9 +126,9 @@ def get_profile_statistics(influenced_orders):
         else:
             unprofitable_trades += 1
 
-        realized_liability += order['liability']
-        realized_buy_price += order['buy_price'] * order['influence']
-        realized_sell_price += order['sell_price'] * order['influence']
+        realized_liability += float(order['liability'])
+        realized_buy_price += float(order['buy_price']) * order['influence']
+        realized_sell_price += float(order['sell_price']) * order['influence']
 
     for order in influenced_orders['open']:
         if order['liability'] > 0:
@@ -124,7 +137,7 @@ def get_profile_statistics(influenced_orders):
             unprofitable_trades += 1
 
         unrealized_return += order['liability']
-        unrealized_buy_price += order['buy_price'] * order['influence']
+        unrealized_buy_price += float(order['buy_price']) * order['influence']
         unrealized_sell_price += order['recent_price'] * order['influence']
 
     total_open = len(influenced_orders['open'])

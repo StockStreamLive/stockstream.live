@@ -86,14 +86,14 @@ def get_orders_by_id(order_ids):
         request = "/v1/orders?ids={}".format(",".join(chunk))
         votes = get_api_request(request)
         all_orders += votes
-    orders = sorted(all_orders, key=lambda k: k['timestamp'])
+    orders = sorted(all_orders, key=lambda k: k['created_at'])
     return orders
 
 
 def get_orders_by_symbol(symbol):
     request = "/v1/orders/symbol/{}".format(symbol)
     orders = get_api_request(request)
-    orders = sorted(orders, key=lambda k: k['timestamp'])
+    orders = sorted(orders, key=lambda k: k['created_at'])
     return orders
 
 
@@ -118,7 +118,7 @@ def get_positions_by_symbol(symbol):
 def get_orders_by_player(username):
     request = "/v1/orders/player/{}".format(username)
     orders = get_api_request(request)
-    orders = sorted(orders, key=lambda k: k['timestamp'])
+    orders = sorted(orders, key=lambda k: k['created_at'])
     return orders
 
 
@@ -130,7 +130,7 @@ def get_orders_today():
 def get_orders_by_date(dateStr):
     request = "/v1/orders/date/{}".format(dateStr.replace("/", "-"))
     votes = get_api_request(request)
-    newvotes = sorted(votes, key=lambda k: k['timestamp'])
+    newvotes = sorted(votes, key=lambda k: k['created_at'])
     return newvotes
 
 

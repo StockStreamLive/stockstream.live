@@ -22,8 +22,8 @@ def compute_value(portfolio):
     for order in orders:
         if order['state'] in non_pending_states or order['side'] == 'sell':
             continue
-        price = order['limit']
-        value += price * order['quantity']
+        price = float(order['price'])
+        value += price * int(float(order['quantity']))
 
     value += portfolio['cashBalance']
 
