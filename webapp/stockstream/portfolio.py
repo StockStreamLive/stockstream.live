@@ -13,6 +13,8 @@ def compute_value(portfolio):
 
     for asset in portfolio['assets']:
         symbol = asset['symbol']
+        if symbol not in quoteMap:
+            continue
         recent_price = robinhood.quote.most_recent_price(quoteMap[symbol])
         asset_value = recent_price * asset['shares']
         value += asset_value
@@ -70,6 +72,8 @@ def compute_portfolio_statistics():
     asset_stats = {}
 
     for asset in portfolio['assets']:
+        if asset['symbol'] not in quote_map:
+            continue
         quote = quote_map[asset['symbol']]
         asset_stats[asset['symbol']] = compute_asset_stats(asset, portfolio_value, quote)
 
