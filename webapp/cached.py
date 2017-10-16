@@ -9,7 +9,7 @@ class cached(object):
 
     def __call__(self, func):
         def inner(*args, **kwargs):
-            param = args[1]
+            param = args[1] if len(args) > 1 else args[0]
             max_age = kwargs.get('max_age', self.default_max_age)
             if func not in self.cached_function_responses:
                 self.cached_function_responses[func] = {}

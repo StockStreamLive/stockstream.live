@@ -180,8 +180,8 @@ $:render.elements.homelogo()
 
             <tr>
                 <td class="timestamp">$:buy_time</td>
-                <td>\$$:"{:.2f}".format(abs(buy_price))</td>
-                <td>\$$:"{:.2f}".format(abs(recent_price))</td>
+                <td>$:scrub.dollar_value(buy_price)</td>
+                <td>$:scrub.dollar_value(recent_price)</td>
                 <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
                 <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
                 <td>

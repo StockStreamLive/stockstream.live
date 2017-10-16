@@ -15,7 +15,6 @@ import robinhood
 import scrub
 from gunicorn.app.base import BaseApplication
 import twitch_api
-from expiringdict import ExpiringDict
 
 import gunicorn.app.base
 

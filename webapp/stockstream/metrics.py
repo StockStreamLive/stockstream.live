@@ -11,6 +11,12 @@ def get_days_old():
     return days
 
 
+def compute_cost(order):
+    if 'average_price' in order and order['average_price'] is not None:
+        return float(order['average_price'])
+    return float(order['price'])
+
+
 def compute_stats_for_symbol(symbol):
     orders = stockstream.api.get_orders_by_symbol(symbol)
     quote = robinhood.api.get_quote(symbol)
@@ -28,8 +34,8 @@ def compute_stats_for_symbol(symbol):
         if not order['state'] == 'filled':
             continue
 
-        price = order['price']
-        shares = int(order['quantity'])
+        price = compute_cost(order)
+        shares = int(float(order['quantity']))
 
         trades = trades + 1
 

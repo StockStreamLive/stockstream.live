@@ -4,6 +4,8 @@ import traceback
 
 
 def get_symbol_to_quotes(symbols):
+    if len(symbols) == 0:
+        return {}
     symbol_to_quote = {}
     try:
         quotes = httputil.get_json_object_from_url("https://api.robinhood.com/quotes/?symbols={}".format(",".join(symbols)))['results']
