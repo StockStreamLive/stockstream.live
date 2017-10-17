@@ -1,4 +1,7 @@
 $def with ()
+
+$ referral = robinhood.referral.get_referral()
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +14,7 @@ $:render.elements.header()
         height: 90px;
         margin: 10px;
         border-style: none;
-        margin-left: 60px;
+        margin-left: 0;
         margin-bottom: 10px;
         transition: all .05s ease;
         display: flex;
@@ -19,7 +22,7 @@ $:render.elements.header()
     }
 
     .side_link {
-        display: flex;
+        display: inline-block;
         align-items: center;
         height: 90px;
     }
@@ -29,15 +32,14 @@ $:render.elements.header()
     }
 
     .social_media_container {
-        margin-left: 60px;
+        margin-left: 0;
     }
 
     .social_media {
         overflow: hidden;
         height: 45px;
-        margin-left: 1px;
         border-style: none;
-        margin-top: 20px;
+        margin-top: 40px;
         margin-bottom: 10px;
         transition: all .05s ease;
     }
@@ -55,11 +57,11 @@ $:render.elements.header()
     }
 
     #robinhoodlogo {
-        filter: drop-shadow(0px 0px 15px #00d097);
+        filter: drop-shadow(0px 0px 15px gold);
     }
 
     #robinhoodlogo:hover {
-        filter: drop-shadow(0px 0px 25px #00d097);
+        filter: drop-shadow(0px 0px 25px gold);
     }
 
     #stocktwitslogo {
@@ -169,20 +171,25 @@ $:render.elements.header()
                 width="350">
         </iframe>
 
-        <div>
-            <a href="/portfolio" class="side_link"><img id="portfoliologo" class="follow" src="/static/plaque-portfolio.png"/></a>
-            <br>
-            <br>
-            <a href="/charts" class="side_link"><img id="chartslogo" class="follow" src="/static/plaque-charts.png"/></a>
-            <br>
+    </div>
 
-            <div class="social_media_container">
-                <a target="_blank" href="https://twitch.tv/stockstream"><img id="twitchlogo" class="social_media" src="/static/twitch-logo.png"/></a>
-                <a target="_blank" href="https://twitter.com/stockstream"><img id="twitterlogo" class="social_media" src="/static/twtr-logo.png"/></a>
-                <a target="_blank" href="https://stocktwits.com/stockstream"><img id="stocktwitslogo" class="social_media" src="/static/stocktwits-logo.png"/></a>
-                <a target="_blank" href="https://discord.gg/xnrKgEj"><img id="discordlogo" class="social_media" src="/static/discord-logo.png"/></a>
-            </div>
+    <div>
+        <a href="/portfolio" class="side_link"><img id="portfoliologo" class="follow" src="/static/plaque-portfolio.png"/></a>
 
+        <a href="$:referral" class="side_link"><img id="robinhoodlogo" class="follow" src="/static/plaque-robinhood.png"/></a>
+
+        <a href="/charts" class="side_link"><img id="chartslogo" class="follow" src="/static/plaque-charts.png"/></a>
+
+        <br>
+        <br>
+        <br>
+        <br>
+
+        <div class="social_media_container">
+            <a target="_blank" href="https://twitch.tv/stockstream"><img id="twitchlogo" class="social_media" src="/static/twitch-logo.png"/></a>
+            <a target="_blank" href="https://twitter.com/stockstream"><img id="twitterlogo" class="social_media" src="/static/twtr-logo.png"/></a>
+            <a target="_blank" href="https://stocktwits.com/stockstream"><img id="stocktwitslogo" class="social_media" src="/static/stocktwits-logo.png"/></a>
+            <a target="_blank" href="https://discord.gg/xnrKgEj"><img id="discordlogo" class="social_media" src="/static/discord-logo.png"/></a>
         </div>
 
     </div>
