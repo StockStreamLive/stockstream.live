@@ -1,9 +1,7 @@
 import requests
 import traceback
-import cached
 
 
-@cached.cached()
 def get_json_object_from_url(url):
     print "Retrieving url: " + url
 
