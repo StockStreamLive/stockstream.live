@@ -13,3 +13,4 @@ pytz
 cherrypy
 gunicorn
 Markdown
+redis

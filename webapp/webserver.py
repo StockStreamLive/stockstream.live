@@ -44,6 +44,7 @@ urls = (
     '/*(.+)', 'Index'
 )
 
+
 class StockStreamWebApp(web.application):
     def run(self, *middleware):
         port = 8080
