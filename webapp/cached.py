@@ -32,11 +32,13 @@ class cached(object):
 
             is_cached = redis_client.exists(path)
 
-            expired_cache = False
+            reload_cache = True
             if path in self.path_cache_time:
-                expired_cache = (datetime.now() - self.path_cache_time[path] > max_age)
+                reload_cache = (datetime.now() - self.path_cache_time[path] > max_age)
+            else:
+                self.path_cache_time[path] = datetime.now()
 
-            if not is_cached or expired_cache:
+            if not is_cached or reload_cache:
                 if 'max_age' in kwargs:
                     del kwargs['max_age']
                 self.__refresh_function_param(func, path, is_cached, *args, **kwargs)
