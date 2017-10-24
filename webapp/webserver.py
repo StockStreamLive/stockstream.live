@@ -15,6 +15,7 @@ import robinhood
 import scrub
 from gunicorn.app.base import BaseApplication
 import twitch_api
+import config
 
 import gunicorn.app.base
 
@@ -28,6 +29,7 @@ t_globals = dict(datestr=web.datestr,
                  robinhood=robinhood,
                  tradingview_api=tradingview_api,
                  datetime=datetime,
+                 api_endpoint=config.SS_API_ENDPOINT,
                  scrub=scrub,
                  locale=locale,
                  json=json,
@@ -75,7 +77,6 @@ class Info:
     def POST(self, url):
         raise web.seeother('/')
 
-    @cached()
     def GET(self, page):
         markdown_converter = markdown.Markdown(output_format='html4')
         info_file = 'markdown/{}.markdown'.format(page)
