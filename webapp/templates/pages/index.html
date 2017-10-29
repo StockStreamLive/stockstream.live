@@ -1,4 +1,4 @@
-$def with ()
+$def with (model)
 
 $ referral = robinhood.referral.get_referral()
 
@@ -199,7 +199,7 @@ $:render.elements.navbar()
     </div>
 
     <br>
-    $:render.elements.order_stats()
+    $:render.elements.order_stats(model)
     <hr>
     <br>
 
@@ -208,7 +208,7 @@ $:render.elements.navbar()
     <br>
 
     <div style="width:85%;">
-        $:render.elements.portfolio_graph()
+        $:render.elements.portfolio_graph(model)
     </div>
 
     <hr>
@@ -217,7 +217,7 @@ $:render.elements.navbar()
     <br>
 
     <div style="width:85%;">
-        $:render.elements.top_players()
+        $:render.elements.top_players(model['top_players_list'])
     </div>
 
     $:render.elements.footer()

@@ -1,4 +1,4 @@
-$def with ()
+$def with (model)
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +16,7 @@ $:render.elements.navbar()
     <h2>Portfolio Holdings Scatter Chart</h2>
     <br>
 
-    $:render.elements.portfolio_scatter_chart()
+    $:render.elements.portfolio_scatter_chart(model['portfolio_stats'])
 
     <hr>
 
@@ -24,7 +24,7 @@ $:render.elements.navbar()
 
     <br>
     <div style="width:90%;">
-        $:render.elements.portfolio_graph()
+        $:render.elements.portfolio_graph(model)
     </div>
 
     <hr>
@@ -33,7 +33,7 @@ $:render.elements.navbar()
 
     <br>
     <div style="width:95%">
-        $:render.elements.portfolio_weight_chart()
+        $:render.elements.portfolio_weight_chart(model['portfolio_stats'])
     </div>
 
     $:render.elements.footer()

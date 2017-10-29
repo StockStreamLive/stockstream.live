@@ -1,4 +1,4 @@
-$def with ()
+$def with (model)
 
 $ orders = model['orders']
 $ portfolio_stats = model['portfolio_stats']
@@ -51,7 +51,7 @@ $:render.elements.navbar()
     <hr>
     <br>
 
-    $:render.elements.order_stats()
+    $:render.elements.order_stats(model)
 
     <hr>
     <span class="balance">Cash: $:scrub.dollar_value(portfolio_stats['cash_balance'])</span>
