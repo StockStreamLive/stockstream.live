@@ -115,13 +115,6 @@ def get_positions_by_symbol(symbol):
     return positions
 
 
-def get_orders_by_player(username):
-    request = "/v1/orders/player/{}".format(username)
-    orders = get_api_request(request)
-    orders = sorted(orders, key=lambda k: k['created_at'])
-    return orders
-
-
 def get_orders_today():
     today_str = time.strftime("%m-%d-%Y")
     return get_orders_by_date(today_str)

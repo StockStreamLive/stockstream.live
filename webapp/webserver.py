@@ -95,13 +95,13 @@ class Charts:
 
     @cached()
     def GET(self, url):
-        render._keywords['globals']['model'] = {
+        page_model = {
                 'portfolio_values': stockstream.api.get_portfolio_values(),
                 'portfolio_stats': stockstream.portfolio.compute_portfolio_statistics(),
                 'orders': stockstream.api.get_orders_today(),
             }
 
-        return render.pages.charts()
+        return render.pages.charts(page_model)
 
 
 class Symbol:
@@ -126,7 +126,7 @@ class Symbol:
         if symbol in asset_map:
             asset_stats = stockstream.portfolio.compute_asset_stats(asset_map[symbol], portfolio_value, quote)
 
-        render._keywords['globals']['model'] = {
+        page_model = {
             'orders': stockstream.api.get_orders_by_symbol(symbol),
             'fundamentals': robinhood.api.get_fundamentals(symbol),
             'market': tradingview_api.get_market_for_instrument(instrument),
@@ -141,7 +141,7 @@ class Symbol:
             'symbol_profile': stockstream.positions.assemble_positions(positions),
         }
 
-        return render.pages.symbol(symbol)
+        return render.pages.symbol(symbol, page_model)
 
 
 class Player:
@@ -164,14 +164,14 @@ class Player:
         player_profile = stockstream.positions.assemble_positions(positions)
         profile_stats = player_profile['profile_statistics']
 
-        render._keywords['globals']['model'] = {
+        page_model = {
             'positions': positions,
             'player_profile': player_profile,
             'profile_stats': profile_stats,
             'twitch_user': channel
         }
 
-        return render.pages.player()
+        return render.pages.player(page_model)
 
 
 class Portfolio:
@@ -184,14 +184,14 @@ class Portfolio:
     @cached()
     def GET(self, url):
 
-        render._keywords['globals']['model'] = {
+        page_model = {
                 'portfolio_values': stockstream.api.get_portfolio_values(),
                 'portfolio_stats': stockstream.portfolio.compute_portfolio_statistics(),
                 'order_stats': stockstream.api.get_order_stats(),
                 'orders': stockstream.api.get_orders_today(),
             }
 
-        page = render.pages.portfolio()
+        page = render.pages.portfolio(page_model)
 
 
         return page
@@ -207,7 +207,7 @@ class Index:
     @cached()
     def GET(self, url):
 
-        render._keywords['globals']['model'] = {
+        page_model = {
                 'portfolio_values': stockstream.api.get_portfolio_values(),
                 'portfolio_stats': stockstream.portfolio.compute_portfolio_statistics(),
                 'order_stats': stockstream.api.get_order_stats(),
@@ -215,7 +215,7 @@ class Index:
                 'orders': stockstream.api.get_orders_today(),
             }
 
-        page = render.pages.index()
+        page = render.pages.index(page_model)
 
         return page
 
