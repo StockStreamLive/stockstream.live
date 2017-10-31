@@ -6,7 +6,7 @@ $ portfolio_values = model['portfolio_values']
 $ portfolio_stats = model['portfolio_stats']
 $ portfolio_value = portfolio_stats['portfolio_value']
 
-$ start_value = portfolio_values[0]['startValue']
+$ start_value = portfolio_values[0]['adjusted_close_equity']
 
 $ total_return_percent = (portfolio_value - start_value) / start_value * 100
 $ total_return_dollars = portfolio_value - start_value

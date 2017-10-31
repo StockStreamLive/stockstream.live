@@ -1,8 +1,6 @@
 $def with (model)
 
-$ portfolio_values = model['portfolio_values'][:-1]
-$ today_value = model['portfolio_values'][-1]["fiveMinValues"][-1]['adjusted_close_equity']
-$ today_date = datetime.now().strftime("%m/%d/%Y")
+$ portfolio_values = model['portfolio_values']
 
 <script>
     jQuery(window).on('load', function() {
@@ -11,8 +9,7 @@ $ today_date = datetime.now().strftime("%m/%d/%Y")
             data: {
                 labels: [
                     $for value in portfolio_values:
-                        "$:value['date']",
-                    "$:today_date"
+                        "$:value['begins_at']",
                 ],
                 datasets: [{
                     label: "Total Portfolio Value",
@@ -20,8 +17,7 @@ $ today_date = datetime.now().strftime("%m/%d/%Y")
                     borderColor: "cyan",
                     data: [
                         $for value in portfolio_values:
-                            $:value['endValue'],
-                        $:today_value
+                            $:value['adjusted_close_equity'],
                     ],
                     fill: false,
                 }]

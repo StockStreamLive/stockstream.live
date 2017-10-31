@@ -15,7 +15,7 @@ def get_current_portfolio():
 
 def get_portfolio_values():
     values = get_api_request("/v1/portfolio/values")
-    values = sorted(values, key=lambda k: k['date'])
+    values = sorted(values, key=lambda k: k['begins_at'])
     return values
 
 
