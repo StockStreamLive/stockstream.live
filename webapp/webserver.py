@@ -42,6 +42,7 @@ urls = (
     '/symbol/*(.+)', 'Symbol',
     '/portfolio*(.+)', 'Portfolio',
     '/player/*(.+)', 'Player',
+    '/dashboard*(.+)', 'Dashboard',
     '/charts*(.+)', 'Charts',
     '/*(.+)', 'Index'
 )
@@ -193,6 +194,33 @@ class Portfolio:
 
         page = render.pages.portfolio(page_model)
 
+
+        return page
+
+
+class Dashboard:
+    def __init__(self):
+        pass
+
+    def POST(self, url):
+        raise web.seeother('/')
+
+    @cached()
+    def GET(self, url):
+
+        date_str = robinhood.api.find_last_market_open_date()
+
+        positions = stockstream.api.get_positions_by_date(date_str)
+        date_profile = stockstream.positions.assemble_positions(positions)
+
+        page_model = {
+                'date_profile': date_profile,
+                'portfolio_values': stockstream.api.get_portfolio_values_by_date(date_str),
+                'positions': positions,
+                'date_str': date_str
+            }
+
+        page = render.pages.dashboard(page_model)
 
         return page
 
