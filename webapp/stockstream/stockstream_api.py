@@ -19,6 +19,12 @@ def get_portfolio_values():
     return values
 
 
+def get_portfolio_values_by_date(date):
+    request = "/v1/portfolio/values/date/{}".format(date)
+    values = get_api_request(request)
+    return values
+
+
 def get_votes_by_symbol(symbol):
     request = "/v1/votes/symbol/{}".format(symbol)
     votes = get_api_request(request)
@@ -115,13 +121,19 @@ def get_positions_by_symbol(symbol):
     return positions
 
 
+def get_positions_by_date(date):
+    request = "/v1/positions/date/{}".format(date)
+    positions = get_api_request(request)
+    return positions
+
+
 def get_orders_today():
-    today_str = time.strftime("%m-%d-%Y")
+    today_str = time.strftime("%Y-%m-%d")
     return get_orders_by_date(today_str)
 
 
 def get_orders_by_date(dateStr):
-    request = "/v1/orders/date/{}".format(dateStr.replace("/", "-"))
+    request = "/v1/orders/date/{}".format(dateStr)
     votes = get_api_request(request)
     newvotes = sorted(votes, key=lambda k: k['created_at'])
     return newvotes

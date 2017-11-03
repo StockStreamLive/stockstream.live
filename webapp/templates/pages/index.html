@@ -138,6 +138,14 @@ $:render.elements.header()
         filter: drop-shadow(0px 0px 25px red);
     }
 
+    #dashboardlogo {
+        filter: drop-shadow(0px 0px 15px cyan);
+    }
+
+    #dashboardlogo:hover {
+        filter: drop-shadow(0px 0px 25px cyan);
+    }
+
     #heading {
         margin-top: 40px;
     }
@@ -178,9 +186,15 @@ $:render.elements.navbar()
     </div>
 
     <div>
-        <a href="/portfolio" class="side_link"><img id="portfoliologo" class="follow" src="/static/plaque-portfolio.png"/></a>
 
         <a href="$:referral" class="side_link"><img id="robinhoodlogo" class="follow" src="/static/plaque-robinhood.png"/></a>
+
+        <br>
+        <br>
+        <br>
+
+        <a href="/portfolio" class="side_link"><img id="portfoliologo" class="follow" src="/static/plaque-portfolio.png"/></a>
+        <a href="/dashboard" class="side_link"><img id="dashboardlogo" class="follow" src="/static/plaque-dashboard.png"/></a>
 
         <a href="/charts" class="side_link"><img id="chartslogo" class="follow" src="/static/plaque-charts.png"/></a>
 
@@ -208,7 +222,7 @@ $:render.elements.navbar()
     <br>
 
     <div style="width:85%;">
-        $:render.elements.portfolio_graph(model)
+        $:render.elements.portfolio_graph(model['portfolio_values'])
     </div>
 
     <hr>

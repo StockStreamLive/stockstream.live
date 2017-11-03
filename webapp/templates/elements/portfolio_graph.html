@@ -1,6 +1,4 @@
-$def with (model)
-
-$ portfolio_values = model['portfolio_values']
+$def with (graph_values)
 
 <script>
     jQuery(window).on('load', function() {
@@ -8,7 +6,7 @@ $ portfolio_values = model['portfolio_values']
             type: 'line',
             data: {
                 labels: [
-                    $for value in portfolio_values:
+                    $for value in graph_values:
                         "$:value['begins_at']",
                 ],
                 datasets: [{
@@ -16,7 +14,7 @@ $ portfolio_values = model['portfolio_values']
                     backgroundColor: "cyan",
                     borderColor: "cyan",
                     data: [
-                        $for value in portfolio_values:
+                        $for value in graph_values:
                             $:value['adjusted_close_equity'],
                     ],
                     fill: false,

@@ -69,6 +69,7 @@ def organize_positions(positions, symbol_to_quote):
         else:
             sell_order = position['sellOrder']
             sell_price = compute_cost(sell_order)
+            sell_order_id = sell_order['id']
 
             difference = sell_price - buy_price
             percent_change = compute_change_decimal(buy_price, sell_price) * 100
