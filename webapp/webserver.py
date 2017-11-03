@@ -212,10 +212,13 @@ class Dashboard:
 
         positions = stockstream.api.get_positions_by_date(date_str)
         date_profile = stockstream.positions.assemble_positions(positions)
+        portfolio_values = stockstream.api.get_portfolio_values_by_date(date_str)
+        if portfolio_values is None:
+            portfolio_values = []
 
         page_model = {
                 'date_profile': date_profile,
-                'portfolio_values': stockstream.api.get_portfolio_values_by_date(date_str),
+                'portfolio_values': portfolio_values,
                 'positions': positions,
                 'date_str': date_str
             }
