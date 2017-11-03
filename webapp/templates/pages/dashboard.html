@@ -25,6 +25,12 @@ $:render.elements.header()
         );
     </script>
 
+    <style>
+        .timestamp {
+            white-space: nowrap;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -66,7 +72,7 @@ $:render.elements.navbar()
         $for order in date_profile['influenced_orders']['open']:
             $ symbol = order['symbol']
 
-            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y %H:%M')
+            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
 
             $ recent_price = order['recent_price']
             $ buy_price = order['buy_price']
@@ -76,7 +82,7 @@ $:render.elements.navbar()
 
             <tr>
                 <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
-                <td>$:buy_time</td>
+                <td class="timestamp">$:buy_time</td>
                 <td>$:scrub.dollar_value(buy_price)</td>
                 <td>$:scrub.dollar_value(recent_price)</td>
                 <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
@@ -119,8 +125,8 @@ $:render.elements.navbar()
 
             <tr>
                 <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
-                <td>$:buy_time</td>
-                <td>$:sell_time</td>
+                <td class="timestamp">$:buy_time</td>
+                <td class="timestamp">$:sell_time</td>
                 <td>$:scrub.dollar_value(buy_price)</td>
                 <td>$:scrub.dollar_value(sell_price)</td>
                 <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
