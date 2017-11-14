@@ -10,7 +10,7 @@ If you have any comments, questions or suggestions about the API or StockStream 
 ---
 The Orders API surfaces all the orders placed on Robinhood, and their current state. You can use this API to get orders **by date**, **by symbol** or **by id**.
 
-* **date**: To query by date, you must pass the date in the format: *MM-dd-yyyy*. The earliest possible date is **05-30-2017**.
+* **date**: To query by date, you must pass the date in the format: *yyyy-MM-dd*. The earliest possible date is **2017-05-30**.
 * **symbol**: To query by symbol you must pass the symbol in uppercase.
 * **id_list**: To query by id you must pass the list of id's, separated by comma.
 
@@ -22,7 +22,7 @@ The Orders API surfaces all the orders placed on Robinhood, and their current st
     [
        {
           "id":"885e3d109ef091e047313aab39e2d6adfe3f1d83",
-          "date":"08/04/2017",
+          "date":"2017-08-24T13:29:55.013000Z",
           "symbol":"COST",
           "side":"buy",
           "state":"filled",
@@ -41,7 +41,7 @@ The Orders API surfaces all the orders placed on Robinhood, and their current st
 
 
  * **id**: The ID is represented by a SHA1 hash and has no meaning other than to uniquely identify this order.
- * **date**: The date that this order was place in the format: *MM/dd/yyyy*.
+ * **created_at**: The timestamp that this order was placed in the format.
  * **symbol**: The ticker symbol of the stock or ETF that was purchased or sold.
  * **side**: Identifies whether this was a purchase or a sale. Can be either **buy** or **sell**.
  * **state**: The state of the order. Can be **queued**, **unconfirmed**, **confirmed**, **partially_filled**, **filled**, **rejected**, **cancelled**, or **failed**.

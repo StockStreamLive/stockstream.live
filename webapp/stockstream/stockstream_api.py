@@ -72,13 +72,6 @@ def get_votes_by_date_by_symbol(date, symbol):
     return filtered
 
 
-def voteStats(player):
-    request = "/v1/votes/player/twitch:{}".format(player)
-    votes = get_api_request(request)
-    newvotes = sorted(votes, key=lambda k: k['timestamp'])
-    return newvotes
-
-
 def split_list(lst, n):
     """Yield successive n-sized chunks from l."""
     for i in range(0, len(lst), n):
