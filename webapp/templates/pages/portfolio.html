@@ -85,7 +85,7 @@ $:render.elements.navbar()
             <tr>
                 <td class="symbol"><a href="/symbol/$:order['symbol']">$:order['symbol']</a></td>
                 <td>$:order['side']</td>
-                <td>$:int(order['quantity'])</td>
+                <td>$:int(float(order['quantity']))</td>
                 <td>$:scrub.dollar_value(order['price'])</td>
                 <td>$:status</td>
             </tr>
