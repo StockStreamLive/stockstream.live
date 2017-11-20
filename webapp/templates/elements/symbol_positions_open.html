@@ -1,0 +1,54 @@
+$def with (title, positions)
+
+$ tableId = scrub.id(title)
+$ tableBodyClass = scrub.id(title) + "Body"
+
+<script>
+    jQuery(document).ready(
+        function() {
+            jQuery("#$:tableId").tablesorter();
+            jQuery("#$:tableId").trigger("update");
+            var table = jQuery('#$:tableId');
+            table.floatThead();
+        }
+    );
+</script>
+
+<h2>$:title</h2>
+<table id="$:tableId">
+    <thead>
+    <tr>
+        <th>Buy Date</th>
+        <th>Buy Price</th>
+        <th>Quote</th>
+        <th>Return $$</th>
+        <th>Return %</th>
+        <th>Owners</th>
+    </tr>
+    </thead>
+    <tbody id="$:tableBodyClass">
+    $for position in positions:
+        $ symbol = position['symbol']
+
+        $ buy_time = datetime.fromtimestamp(position['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
+
+        $ recent_price = position['recent_price']
+        $ buy_price = position['buy_price']
+        $ difference = position['difference']
+        $ liability = position['liability']
+        $ percent_change = position['percent_change']
+        $ influence_percent = position['influence'] * 100
+
+        <tr>
+            <td class="timestamp">$:buy_time</td>
+            <td>$:scrub.dollar_value(buy_price)</td>
+            <td>$:scrub.dollar_value(recent_price)</td>
+            <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
+            <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
+            <td>
+                $for player in position['liable_players']:
+                    <span><a href="/player/$player">$player.split(":")[1]</a></span>
+            </td>
+        </tr>
+    </tbody>
+</table>

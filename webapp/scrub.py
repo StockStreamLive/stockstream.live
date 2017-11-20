@@ -1,3 +1,16 @@
+from calendar import timegm
+from dateutil.parser import parse
+
+
+def create_timestamp(date_str):
+    timestamp = parse(date_str)
+    timestamp = timegm(timestamp.timetuple()) * 1000
+    return timestamp
+
+
+def id(str_value):
+    return ''.join(e for e in str_value if e.isalnum())
+
 
 def human_format(num):
     if num is None:
@@ -30,7 +43,7 @@ def dollar_value(num):
     if isinstance(num, basestring):
         num = float(num)
 
-    return "$" + "{:.2f}".format(abs(num))
+    return "$" + "{:,.2f}".format(abs(num))
 
 
 def percent_value(num):

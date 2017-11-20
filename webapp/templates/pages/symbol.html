@@ -29,7 +29,7 @@ $ average_volume = scrub.human_format(fundamentals['average_volume'])
 
 <head>
 
-<title>$:symbol $:scrub.percent_change(stats_for_symbol['percent_change']) $$$:stats_for_symbol['recent_price']</title>
+<title>$:symbol $:scrub.percent_change(stats_for_symbol['percent_change']) $:scrub.dollar_value(stats_for_symbol['recent_price'])</title>
 
 $:render.elements.header()
 
@@ -57,25 +57,6 @@ $:render.elements.header()
     }
 
 </style>
-
-<script>
-    jQuery(document).ready(
-        function() {
-            jQuery("#orders").tablesorter();
-            jQuery("#orders").trigger("update");
-
-            jQuery("#openOrders").tablesorter();
-            jQuery("#openOrders").trigger("update");
-            var table = jQuery('#openOrders');
-            table.floatThead();
-
-            jQuery("#closedOrders").tablesorter();
-            jQuery("#closedOrders").trigger("update");
-            var table = jQuery('#closedOrders');
-            table.floatThead();
-        }
-    );
-</script>
 
 
 </head>
@@ -148,87 +129,12 @@ $:render.elements.navbar()
 
     <br>
 
-    <h2>Open Positions</h2>
-    <table id="openOrders">
-        <thead>
-        <tr>
-            <th>Buy Date</th>
-            <th>Buy Price</th>
-            <th>Quote</th>
-            <th>Return $$</th>
-            <th>Return %</th>
-            <th>Owners</th>
-        </tr>
-        </thead>
-        <tbody id="openOrdersBody">
-        $for order in symbol_profile['influenced_orders']['open']:
-            $ symbol = order['symbol']
-
-            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
-
-            $ recent_price = order['recent_price']
-            $ buy_price = order['buy_price']
-            $ difference = order['difference']
-            $ liability = order['liability']
-            $ percent_change = order['percent_change']
-            $ influence_percent = order['influence'] * 100
-
-            <tr>
-                <td class="timestamp">$:buy_time</td>
-                <td>$:scrub.dollar_value(buy_price)</td>
-                <td>$:scrub.dollar_value(recent_price)</td>
-                <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
-                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
-                <td>
-                    $for player in order['liable_players']:
-                        <span><a href="/player/$player">$player.split(":")[1]</a></span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    $:render.elements.symbol_positions_open("Open Positions", symbol_profile['influenced_orders']['open'])
 
     <hr>
 
-    <h2>Closed Positions</h2>
-    <table id="closedOrders">
-        <thead>
-        <tr>
-            <th>Buy Date</th>
-            <th>Sell Date</th>
-            <th>Buy Price</th>
-            <th>Sell Price</th>
-            <th>Return $$</th>
-            <th>Return %</th>
-            <th>Owners</th>
-        </tr>
-        </thead>
-        <tbody id="closedOrdersBody">
-        $for order in symbol_profile['influenced_orders']['closed']:
-            $ symbol = order['symbol']
+    $:render.elements.symbol_positions_closed("Closed Positions", symbol_profile['influenced_orders']['closed'])
 
-            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
-            $ sell_time = datetime.fromtimestamp(order['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
-
-            $ sell_price = order['sell_price']
-            $ buy_price = order['buy_price']
-            $ difference = order['difference']
-            $ percent_change = order['percent_change']
-            $ liability = order['liability']
-
-            <tr>
-                <td class="timestamp">$:buy_time</td>
-                <td class="timestamp">$:sell_time</td>
-                <td>$:scrub.dollar_value(buy_price)</td>
-                <td>$:scrub.dollar_value(sell_price)</td>
-                <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
-                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
-                <td>
-                    $for player in order['liable_players']:
-                        <span><a href="/player/$player">$player.split(":")[1]</a></span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
 
     $:render.elements.footer()
 

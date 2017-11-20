@@ -158,18 +158,17 @@ class Player:
         name = scoped_username.split(":")[1]
         channel = twitch_api.get_channel_for_user(name)
 
-        if channel['logo'] is None:
-            channel['logo'] = "/static/8bitmoney.png"
-
         positions = stockstream.api.get_positions_by_player(scoped_username)
         player_profile = stockstream.positions.assemble_positions(positions)
         profile_stats = player_profile['profile_statistics']
+        wallet = stockstream.api.get_wallet_for_user(scoped_username)
 
         page_model = {
             'positions': positions,
             'player_profile': player_profile,
             'profile_stats': profile_stats,
-            'twitch_user': channel
+            'twitch_user': channel,
+            'wallet': wallet
         }
 
         return render.pages.player(page_model)
@@ -185,15 +184,28 @@ class Portfolio:
     @cached()
     def GET(self, url):
 
+        portfolio_stats = stockstream.portfolio.compute_portfolio_statistics()
+
+        if url == ".csv":
+            rows = []
+            for symbol in portfolio_stats['asset_stats']:
+                stats = portfolio_stats['asset_stats'][symbol]
+                if len(rows) == 0:
+                    rows.append(",".join(stats.keys()))
+                rows.append(",".join(str(value) for value in stats.values()))
+
+            return "\n".join(rows)
+        elif url == ".json":
+            return json.dumps(portfolio_stats['asset_stats'])
+
         page_model = {
                 'portfolio_values': stockstream.api.get_portfolio_values(),
-                'portfolio_stats': stockstream.portfolio.compute_portfolio_statistics(),
+                'portfolio_stats': portfolio_stats,
                 'order_stats': stockstream.api.get_order_stats(),
                 'orders': stockstream.api.get_orders_today(),
             }
 
         page = render.pages.portfolio(page_model)
-
 
         return page
 
