@@ -11,6 +11,10 @@ $ start_value = portfolio_values[0]['adjusted_close_equity']
 $ total_return_percent = (portfolio_value - start_value) / start_value * 100
 $ total_return_dollars = portfolio_value - start_value
 
+$ cash = portfolio_stats['cash_balance']
+$ equity = portfolio_value - cash
+$ equity_count = len(portfolio_stats['asset_stats'].keys())
+
 <style>
     #overviewBody td:nth-child(1) {
         color: white;
@@ -22,20 +26,63 @@ $ total_return_dollars = portfolio_value - start_value
             1px 1px 0 #1b2840;
         filter: drop-shadow(0px 0px 2px red);
     }
+
+    .data_container {
+        width: 50%;
+    }
+
+    .tx_container {
+        display: inline-block;
+        margin: 10px;
+        line-height: 1.5;
+    }
+
+    .tx_value {
+        color: white;
+        font-size: 1.2em;
+    }
+
+    .portfolio_value {
+        font-size: 1.6em;
+    }
 </style>
 
-<br>
+<div class="data_container">
+    <div class="tx_container">
+        <h2>Total Bought</h2>
+        <span class="tx_value">$:scrub.dollar_value(order_stats['totalPurchasedAmount'])</span>
+    </div>
+    <div class="tx_container">
+        <h2>Total Sold</h2>
+        <span class="tx_value">$:scrub.dollar_value(order_stats['totalSoldAmount'])</span>
+    </div>
 
-<br>
-<table id="overview">
-    <tbody id="overviewBody">
-        <tr><td>Total Bought</td><td>$:'${:,.2f}'.format(order_stats['totalPurchasedAmount'])</td></tr>
-        <tr><td>Total Sold</td><td>$:'${:,.2f}'.format(order_stats['totalSoldAmount'])</td></tr>
-        <tr><td>Start Value</td><td>$:'${:,.2f}'.format(start_value)</td></tr>
-        <tr><td>Current Value</td><td>$:'${:,.2f}'.format(portfolio_value)</td></tr>
-        <tr><td>ROI $$</td><td><span class="$:("loss" if total_return_dollars < 0 else "profit")">$:scrub.dollar_change(total_return_dollars)</td></tr>
-        <tr><td>ROI %</td><td><span class="$:("loss" if total_return_percent < 0 else "profit")">$:scrub.percent_change(total_return_percent)</span></td></tr>
-        <tr><td>Age</td><td>$:stockstream.metrics.get_days_old() days</td></tr>
-    </tbody>
-</table>​
-<br>
+    <br>
+    <hr>
+
+
+    <div class="tx_container">
+        <h2>Current Total Value</h2>
+        <span class="tx_value portfolio_value">$:scrub.dollar_value(portfolio_value)</span>
+    </div>
+
+    <br>
+
+    <div class="tx_container">
+        <span class="tx_value">$:scrub.dollar_value(cash)</span>
+        in cash and
+        <span class="tx_value">$:scrub.dollar_value(equity)</span>
+        across
+        <span class="tx_value">$:equity_count</span>
+        unique equities.
+    </div>
+
+    <hr>
+
+    <div class="tx_container">
+        <h3>ROI Since launch ($:stockstream.metrics.get_days_old() days ago)</h3>
+        <span class="$:('loss' if total_return_dollars < 0 else 'profit')">$:scrub.dollar_change(total_return_dollars)</span> |
+        <span class="$:('loss' if total_return_percent < 0 else 'profit')">$:scrub.percent_change(total_return_percent)</span>
+    </div>
+
+</div>

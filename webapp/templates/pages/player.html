@@ -4,6 +4,7 @@ $ positions = model['positions']
 $ player_profile = model['player_profile']
 $ profile_stats = model['profile_stats']
 $ twitch_user = model['twitch_user']
+$ wallet = model['wallet']
 
 $ total_trades = float(profile_stats['profitable_trades'] + profile_stats['unprofitable_trades'])
 $ total_trades = 1 if total_trades == 0 else total_trades
@@ -52,23 +53,6 @@ $ percent_profitable = (profile_stats['profitable_trades'] / total_trades) * 100
             text-decoration: underline;
         }
     </style>
-
-
-    <script>
-        jQuery(document).ready(
-            function() {
-                jQuery("#closedOrders").tablesorter();
-                jQuery("#closedOrders").trigger("update");
-                var table = jQuery('#closedOrders');
-                table.floatThead();
-
-                jQuery("#openOrders").tablesorter();
-                jQuery("#openOrders").trigger("update");
-                var table = jQuery('#openOrders');
-                table.floatThead();
-            }
-        );
-    </script>
 
 </head>
 
@@ -137,92 +121,19 @@ $:render.elements.navbar()
         </tbody>
     </table>​
 
+    <br>
     <hr>
 
-    <h2>Open Positions</h2>
-    <table id="openOrders">
-        <thead>
-        <tr>
-            <th>Symbol</th>
-            <th>Buy Date</th>
-            <th>Buy Price</th>
-            <th>Quote</th>
-            <th>Influence</th>
-            <th>Return $$</th>
-            <th>Return %</th>
-            <th>Liability</th>
-        </tr>
-        </thead>
-        <tbody id="openOrdersBody">
-        $for order in player_profile['influenced_orders']['open']:
-            $ symbol = order['symbol']
+    $:render.elements.player_positions_open("Wallet Positions", player_profile['influenced_orders']['open'], True)
 
-            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y %H:%M')
-
-            $ recent_price = order['recent_price']
-            $ buy_price = order['buy_price']
-            $ difference = order['difference']
-            $ liability = order['liability']
-            $ percent_change = order['percent_change']
-            $ influence_percent = order['influence'] * 100
-
-            <tr>
-                <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
-                <td>$:buy_time</td>
-                <td>$:scrub.dollar_value(buy_price)</td>
-                <td>$:scrub.dollar_value(recent_price)</td>
-                <td>$:scrub.percent_value(influence_percent)</td>
-                <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
-                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
-                <td><span class="$:("loss" if liability < 0 else "profit")">$:scrub.dollar_change(liability)</span></td>
-            </tr>
-        </tbody>
-    </table>
 
     <hr>
 
-    <h2>Closed Positions</h2>
-    <table id="closedOrders">
-        <thead>
-        <tr>
-            <th>Symbol</th>
-            <th>Buy Date</th>
-            <th>Sell Date</th>
-            <th>Buy Price</th>
-            <th>Sell Price</th>
-            <th>Influence</th>
-            <th>Return $$</th>
-            <th>Return %</th>
-            <th>Liability</th>
-        </tr>
-        </thead>
-        <tbody id="closedOrdersBody">
-        $for order in player_profile['influenced_orders']['closed']:
-            $ symbol = order['symbol']
+    $:render.elements.player_positions_open("Public Positions", player_profile['influenced_orders']['open'], False)
 
-            $ buy_time = datetime.fromtimestamp(order['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
-            $ sell_time = datetime.fromtimestamp(order['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
+    <hr>
 
-            $ sell_price = order['sell_price']
-            $ buy_price = order['buy_price']
-            $ difference = order['difference']
-            $ percent_change = order['percent_change']
-            $ influence_percent = order['influence'] * 100
-            $ liability = order['liability']
-
-            <tr>
-                <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
-                <td>$:buy_time</td>
-                <td>$:sell_time</td>
-                <td>$:scrub.dollar_value(buy_price)</td>
-                <td>$:scrub.dollar_value(sell_price)</td>
-                <td>$:scrub.percent_value(influence_percent)</td>
-                <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
-                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
-                <td><span class="$:("loss" if liability < 0 else "profit")">$:scrub.dollar_change(liability)</span></td>
-            </tr>
-        </tbody>
-    </table>
+    $:render.elements.player_positions_closed("Closed Positions", player_profile['influenced_orders']['closed'])
 
     $:render.elements.footer()
 

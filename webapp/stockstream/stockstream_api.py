@@ -144,6 +144,10 @@ def get_votes_by_user(username):
     return get_api_request("/v1/votes/player/{}".format(username))
 
 
+def get_wallet_for_user(username):
+    return get_api_request("/v1/wallets/player/{}".format(username))
+
+
 def get_ranked_players():
     return get_api_request("/v1/players")
 

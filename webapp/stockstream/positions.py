@@ -2,15 +2,7 @@ import stockstream
 import robinhood
 from calendar import timegm
 from dateutil.parser import parse
-
-
-def compute_change_decimal(from_value, to_value):
-    if from_value == 0 and to_value == 0:
-        return 0
-    from_value = 1 if from_value == 0 else from_value
-    difference = (to_value - from_value)
-    decimal_change = (difference / from_value)
-    return decimal_change
+import math_util
 
 
 def compute_cost(order):
@@ -47,7 +39,7 @@ def organize_positions(positions, symbol_to_quote):
 
             recent_price = robinhood.quote.most_recent_price(quote)
             difference = (recent_price - buy_price)
-            percent_change = compute_change_decimal(buy_price, recent_price) * 100
+            percent_change = math_util.compute_change_decimal(buy_price, recent_price) * 100
             liability = difference * influence
 
             timestamp = parse(buy_order['created_at'])
@@ -63,6 +55,7 @@ def organize_positions(positions, symbol_to_quote):
                 "influence": influence,
                 "liability": liability,
                 "quote": quote,
+                "wallet_order": position['walletOrder'],
                 "liable_players": liable_players
             })
 
@@ -71,7 +64,7 @@ def organize_positions(positions, symbol_to_quote):
             sell_price = compute_cost(sell_order)
 
             difference = sell_price - buy_price
-            percent_change = compute_change_decimal(buy_price, sell_price) * 100
+            percent_change = math_util.compute_change_decimal(buy_price, sell_price) * 100
             sell_time = stockstream.order.find_execution_timestamp_for_order(sell_order)
             liability = influence * difference
 
@@ -85,7 +78,8 @@ def organize_positions(positions, symbol_to_quote):
                 "percent_change": percent_change,
                 "liability": liability,
                 "influence": influence,
-                "liable_players": liable_players
+                "liable_players": liable_players,
+                "wallet_order": position['walletOrder']
             })
 
     influenced_orders['closed'] = list(reversed(influenced_orders['closed']))
@@ -144,15 +138,15 @@ def get_profile_statistics(influenced_orders):
     total_closed = len(influenced_orders['closed'])
     total_influenced = total_open + total_closed
 
-    realized_percent_return = compute_change_decimal(realized_buy_price, realized_sell_price) * 100
-    unrealized_percent_return = compute_change_decimal(unrealized_buy_price, unrealized_sell_price) * 100
+    realized_percent_return = math_util.compute_change_decimal(realized_buy_price, realized_sell_price) * 100
+    unrealized_percent_return = math_util.compute_change_decimal(unrealized_buy_price, unrealized_sell_price) * 100
 
     total_return = unrealized_return + realized_liability
 
     total_buy_price = realized_buy_price + unrealized_buy_price
     total_sell_price = realized_sell_price + unrealized_sell_price
 
-    total_percent_return = compute_change_decimal(total_buy_price, total_sell_price) * 100
+    total_percent_return = math_util.compute_change_decimal(total_buy_price, total_sell_price) * 100
 
     return {
         'total_open': total_open,

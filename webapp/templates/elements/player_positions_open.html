@@ -1,0 +1,57 @@
+$def with (title, positions, xor_wallets)
+
+$ tableId = scrub.id(title)
+$ tableBodyClass = scrub.id(title) + "Body"
+
+<script>
+    jQuery(document).ready(
+        function() {
+            jQuery("#$:tableId").tablesorter();
+            jQuery("#$:tableId").trigger("update");
+            var table = jQuery('#$:tableId');
+            table.floatThead();
+        }
+    );
+</script>
+
+<h2>$:title</h2>
+<table id="$:tableId">
+    <thead>
+    <tr>
+        <th>Symbol</th>
+        <th>Buy Date</th>
+        <th>Buy Price</th>
+        <th>Quote</th>
+        <th>Influence</th>
+        <th>Return $$</th>
+        <th>Return %</th>
+        <th>Liability</th>
+    </tr>
+    </thead>
+    <tbody id="openOrdersBody">
+    $for position in positions:
+        $if not position['wallet_order'] and xor_wallets:
+            $continue
+        $ symbol = position['symbol']
+
+        $ buy_time = datetime.fromtimestamp(position['buy_time'] / 1000).strftime('%m-%d-%y %H:%M')
+
+        $ recent_price = position['recent_price']
+        $ buy_price = position['buy_price']
+        $ difference = position['difference']
+        $ liability = position['liability']
+        $ percent_change = position['percent_change']
+        $ influence_percent = position['influence'] * 100
+
+        <tr>
+            <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
+            <td>$:buy_time</td>
+            <td>$:scrub.dollar_value(buy_price)</td>
+            <td>$:scrub.dollar_value(recent_price)</td>
+            <td>$:scrub.percent_value(influence_percent)</td>
+            <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
+            <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
+            <td><span class="$:("loss" if liability < 0 else "profit")">$:scrub.dollar_change(liability)</span></td>
+        </tr>
+    </tbody>
+</table>
