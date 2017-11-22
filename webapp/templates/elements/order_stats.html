@@ -5,11 +5,13 @@ $ order_stats = model['order_stats']
 $ portfolio_values = model['portfolio_values']
 $ portfolio_stats = model['portfolio_stats']
 $ portfolio_value = portfolio_stats['portfolio_value']
+$ portfolio = model['portfolio']
+$ spent_margin = portfolio['spentMargin']
 
 $ start_value = portfolio_values[0]['adjusted_close_equity']
 
-$ total_return_percent = (portfolio_value - start_value) / start_value * 100
-$ total_return_dollars = portfolio_value - start_value
+$ total_return_percent = (portfolio_value - start_value - spent_margin) / start_value * 100
+$ total_return_dollars = portfolio_value - start_value - spent_margin
 
 $ cash = portfolio_stats['cash_balance']
 $ equity = portfolio_value - cash
@@ -60,7 +62,6 @@ $ equity_count = len(portfolio_stats['asset_stats'].keys())
     <br>
     <hr>
 
-
     <div class="tx_container">
         <h2>Current Total Value</h2>
         <span class="tx_value portfolio_value">$:scrub.dollar_value(portfolio_value)</span>
@@ -74,7 +75,9 @@ $ equity_count = len(portfolio_stats['asset_stats'].keys())
         <span class="tx_value">$:scrub.dollar_value(equity)</span>
         across
         <span class="tx_value">$:equity_count</span>
-        unique equities.
+        unique equities. Spent
+        <span class="loss">$:scrub.dollar_value(spent_margin)</span>
+        worth of margin.
     </div>
 
     <hr>

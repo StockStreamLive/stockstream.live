@@ -114,6 +114,7 @@ Below are some truncated data examples:
 
     {
        "cashBalance":1510.1799,
+       "spentMargin":123.45,
        "assets":[
           {
              "symbol":"SINA",
@@ -131,6 +132,7 @@ Below are some truncated data examples:
 
 
  * **cashBalance**: The amount of spendable cash available.
+ * **spentMargin**: The amount of money borrowed from Robinhood.
  * **assets**: The list of assets held in the portfolio:
   * **symbol**: The ticker symbol of the stock held.
   * **shares**: The number of shares held of that stock.

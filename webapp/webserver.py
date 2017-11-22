@@ -184,6 +184,7 @@ class Portfolio:
     @cached()
     def GET(self, url):
 
+        portfolio = stockstream.api.get_current_portfolio()
         portfolio_stats = stockstream.portfolio.compute_portfolio_statistics()
 
         if url == ".csv":
@@ -201,6 +202,7 @@ class Portfolio:
         page_model = {
                 'portfolio_values': stockstream.api.get_portfolio_values(),
                 'portfolio_stats': portfolio_stats,
+                'portfolio': portfolio,
                 'order_stats': stockstream.api.get_order_stats(),
                 'orders': stockstream.api.get_orders_today(),
             }
@@ -256,6 +258,7 @@ class Index:
                 'order_stats': stockstream.api.get_order_stats(),
                 'top_players_list': stockstream.players.get_top_players_list(),
                 'orders': stockstream.api.get_orders_today(),
+                'portfolio': stockstream.api.get_current_portfolio()
             }
 
         page = render.pages.index(page_model)
