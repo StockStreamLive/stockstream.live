@@ -120,35 +120,35 @@ $:render.elements.navbar()
             </tr>
             </thead>
             <tbody id="assetsBody">
-            $for symbol in portfolio_stats['asset_stats']:
-                $ asset_stat = portfolio_stats['asset_stats'][symbol]
-                $ avg_cost = asset_stat['avg_cost']
+                $for symbol in portfolio_stats['asset_stats']:
+                    $ asset_stat = portfolio_stats['asset_stats'][symbol]
+                    $ avg_cost = asset_stat['avg_cost']
 
-                $ recent_price = asset_stat['recent_price']
-                $ shares = asset_stat['shares']
+                    $ recent_price = asset_stat['recent_price']
+                    $ shares = asset_stat['shares']
 
-                $ dollar_change = asset_stat['dollar_change']
-                $ percent_change = asset_stat['percent_change']
+                    $ dollar_change = asset_stat['dollar_change']
+                    $ percent_change = asset_stat['percent_change']
 
-                $ total_cost = asset_stat['total_cost']
-                $ total_value = asset_stat['total_value']
-                $ total_dollar_return = asset_stat['total_dollar_return']
+                    $ total_cost = asset_stat['total_cost']
+                    $ total_value = asset_stat['total_value']
+                    $ total_dollar_return = asset_stat['total_dollar_return']
 
-                $ percent_portfolio = asset_stat['weight']
-                $ percent_change_today = asset_stat['percent_change_today']
-                <tr>
-                <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
-                <td>$:shares</td>
-                <td>$:scrub.dollar_value(avg_cost)</td>
-                <td>$:scrub.dollar_value(recent_price)</td>
-                <td><span class="$:('loss' if dollar_change < 0 else 'profit')">$:scrub.dollar_change(dollar_change)</span></td>
-                <td><span class="$:('loss' if percent_change < 0 else 'profit')">$:scrub.percent_change(percent_change)</span></td>
-                <td>$:scrub.dollar_value(total_cost)</td>
-                <td>$:scrub.dollar_value(total_value)</td>
-                <td><span class="$:('loss' if total_dollar_return < 0 else 'profit')">$:scrub.dollar_change(total_dollar_return)</span></td>
-                <td>$:scrub.percent_value(percent_portfolio)</td>
-                <td><span class="$:('loss' if percent_change_today < 0 else 'profit')">$:scrub.percent_change(percent_change_today)</span></td>
-                </tr>
+                    $ percent_portfolio = asset_stat['weight']
+                    $ percent_change_today = asset_stat['percent_change_today']
+                    <tr>
+                    <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
+                    <td>$:shares</td>
+                    <td>$:scrub.dollar_value(avg_cost)</td>
+                    <td>$:scrub.dollar_value(recent_price)</td>
+                    <td><span class="$:('loss' if dollar_change < 0 else 'profit')">$:scrub.dollar_change(dollar_change)</span></td>
+                    <td><span class="$:('loss' if percent_change < 0 else 'profit')">$:scrub.percent_change(percent_change)</span></td>
+                    <td>$:scrub.dollar_value(total_cost)</td>
+                    <td>$:scrub.dollar_value(total_value)</td>
+                    <td><span class="$:('loss' if total_dollar_return < 0 else 'profit')">$:scrub.dollar_change(total_dollar_return)</span></td>
+                    <td>$:scrub.percent_value(percent_portfolio)</td>
+                    <td><span class="$:('loss' if percent_change_today < 0 else 'profit')">$:scrub.percent_change(percent_change_today)</span></td>
+                    </tr>
             </tbody>
         </table>​
     </div>

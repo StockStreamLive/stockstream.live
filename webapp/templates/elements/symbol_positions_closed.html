@@ -28,29 +28,29 @@ $ tableBodyClass = scrub.id(title) + "Body"
     </tr>
     </thead>
     <tbody id="$:tableBodyClass">
-    $for position in positions:
-        $ symbol = position['symbol']
+        $for position in positions:
+            $ symbol = position['symbol']
 
-        $ buy_time = datetime.fromtimestamp(position['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
-        $ sell_time = datetime.fromtimestamp(position['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
+            $ buy_time = datetime.fromtimestamp(position['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
+            $ sell_time = datetime.fromtimestamp(position['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
 
-        $ sell_price = position['sell_price']
-        $ buy_price = position['buy_price']
-        $ difference = position['difference']
-        $ percent_change = position['percent_change']
+            $ sell_price = position['sell_price']
+            $ buy_price = position['buy_price']
+            $ difference = position['difference']
+            $ percent_change = position['percent_change']
 
-        <tr>
-            <td class="timestamp">$:buy_time</td>
-            <td class="timestamp">$:sell_time</td>
-            <td>$:scrub.dollar_value(buy_price)</td>
-            <td>$:scrub.dollar_value(sell_price)</td>
-            <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
-            <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
-            <td>
-                $for player in position['liable_players']:
-                    <span><a href="/player/$player">$player.split(":")[1]</a></span>
-            </td>
-        </tr>
+            <tr>
+                <td class="timestamp">$:buy_time</td>
+                <td class="timestamp">$:sell_time</td>
+                <td>$:scrub.dollar_value(buy_price)</td>
+                <td>$:scrub.dollar_value(sell_price)</td>
+                <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
+                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
+                <td>
+                    $for player in position['liable_players']:
+                        <span><a href="/player/$player">$player.split(":")[1]</a></span>
+                </td>
+            </tr>
     </tbody>
 </table>
 
