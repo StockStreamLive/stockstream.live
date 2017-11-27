@@ -80,7 +80,8 @@ $:render.elements.navbar()
         $ asset = asset_map[symbol]
         $ asset_value_increase = asset_stats['dollar_change']
         $ asset_percent_increase = asset_stats['percent_change']
-        <span class="holding">Own $:asset['shares'] of $:symbol at $:scrub.dollar_value(asset['avgCost'])</span>
+        $ asset_weight = asset_stats['weight']
+        <span class="holding">Own $:asset['shares'] of $:symbol at $:scrub.dollar_value(asset['avgCost']) which is $:scrub.percent_value(asset_weight) of the portfolio.</span>
         <br>
         <br>
         <span class="$:("loss" if asset_value_increase < 0 else "profit")">$:scrub.dollar_change(asset_value_increase)</span>

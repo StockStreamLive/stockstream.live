@@ -1,4 +1,4 @@
-$def with (title, positions, xor_wallets)
+$def with (title, positions, show_wallets)
 
 $ tableId = scrub.id(title)
 $ tableBodyClass = scrub.id(title) + "Body"
@@ -30,8 +30,15 @@ $ tableBodyClass = scrub.id(title) + "Body"
     </thead>
     <tbody id="openOrdersBody">
     $for position in positions:
-        $if not position['wallet_order'] and xor_wallets:
+
+        $ is_wallet_order = position['wallet_order']
+
+        $if not is_wallet_order and show_wallets:
             $continue
+
+        $if is_wallet_order and not show_wallets:
+            $continue
+
         $ symbol = position['symbol']
 
         $ buy_time = datetime.fromtimestamp(position['buy_time'] / 1000).strftime('%m-%d-%y %H:%M')
@@ -49,9 +56,9 @@ $ tableBodyClass = scrub.id(title) + "Body"
             <td>$:scrub.dollar_value(buy_price)</td>
             <td>$:scrub.dollar_value(recent_price)</td>
             <td>$:scrub.percent_value(influence_percent)</td>
-            <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
-            <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
-            <td><span class="$:("loss" if liability < 0 else "profit")">$:scrub.dollar_change(liability)</span></td>
+            <td><span class="$:('loss' if difference < 0 else 'profit')">$:scrub.dollar_change(difference)</span></td>
+            <td><span class="$:('loss' if percent_change < 0 else 'profit')">$:scrub.percent_change(percent_change)</span></td>
+            <td><span class="$:('loss' if liability < 0 else 'profit')">$:scrub.dollar_change(liability)</span></td>
         </tr>
     </tbody>
 </table>
