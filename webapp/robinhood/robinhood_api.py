@@ -25,13 +25,16 @@ def get_market_hours(date):
 
 
 def find_last_market_open_date():
-    date_str = datetime.today().strftime('%Y-%m-%d')
+    now = datetime.utcnow()
+    date_str = now.strftime('%Y-%m-%d')
 
     start = datetime.strptime(date_str, "%Y-%m-%d")
 
     while True:
         market_hours = get_market_hours(start.strftime('%Y-%m-%d'))
-        if market_hours['is_open']:
+        market_open_time = market_hours['extended_opens_at']
+        now_str = now.isoformat()
+        if market_hours['is_open'] and now_str > market_open_time:
             return start.strftime('%Y-%m-%d')
         start = start - timedelta(days=1)
 
