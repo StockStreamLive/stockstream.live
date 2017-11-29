@@ -43,8 +43,8 @@ $ tableBodyClass = scrub.id(title) + "Body"
                 <td class="timestamp">$:buy_time</td>
                 <td>$:scrub.dollar_value(buy_price)</td>
                 <td>$:scrub.dollar_value(recent_price)</td>
-                <td><span class="$:("loss" if difference < 0 else "profit")">$:scrub.dollar_change(difference)</span></td>
-                <td><span class="$:("loss" if percent_change < 0 else "profit")">$:scrub.percent_change(percent_change)</span></td>
+                <td><span class="$:('loss' if difference < 0 else 'profit')">$:scrub.dollar_change(difference)</span></td>
+                <td><span class="$:('loss' if percent_change < 0 else 'profit')">$:scrub.percent_change(percent_change)</span></td>
                 <td>
                     $for player in position['liable_players']:
                         <span><a href="/player/$player">$player.split(":")[1]</a></span>

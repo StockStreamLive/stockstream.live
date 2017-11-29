@@ -1,20 +1,20 @@
 $def with (model)
 
+$ portfolio = model['portfolio']
 $ order_stats = model['order_stats']
 
+$ spent_margin = portfolio['spentMargin']
 $ portfolio_values = model['portfolio_values']
 $ portfolio_stats = model['portfolio_stats']
-$ portfolio_value = portfolio_stats['portfolio_value']
-$ portfolio = model['portfolio']
-$ spent_margin = portfolio['spentMargin']
+$ portfolio_value = portfolio_stats['portfolio_value'] - spent_margin
 
 $ start_value = portfolio_values[0]['adjusted_close_equity']
 
-$ total_return_percent = (portfolio_value - start_value - spent_margin) / start_value * 100
-$ total_return_dollars = portfolio_value - start_value - spent_margin
+$ total_return_percent = (portfolio_value - start_value) / start_value * 100
+$ total_return_dollars = portfolio_value - start_value
 
 $ cash = portfolio_stats['cash_balance']
-$ equity = portfolio_value - cash
+$ equity = portfolio_stats['portfolio_value'] - cash
 $ equity_count = len(portfolio_stats['asset_stats'].keys())
 
 <style>
@@ -44,6 +44,10 @@ $ equity_count = len(portfolio_stats['asset_stats'].keys())
         font-size: 1.2em;
     }
 
+    .eq_value {
+        font-size: 1.2em;
+    }
+
     .portfolio_value {
         font-size: 1.6em;
     }
@@ -63,21 +67,21 @@ $ equity_count = len(portfolio_stats['asset_stats'].keys())
     <hr>
 
     <div class="tx_container">
-        <h2>Current Total Value</h2>
+        <h2>Portfolio Net Worth</h2>
         <span class="tx_value portfolio_value">$:scrub.dollar_value(portfolio_value)</span>
     </div>
 
     <br>
 
     <div class="tx_container">
-        <span class="tx_value">$:scrub.dollar_value(cash)</span>
-        in cash and
+        <span class="eq_value profit">$:scrub.dollar_value(cash)</span>
+        in cash,
+        <span class="eq_value loss">$:scrub.dollar_value(spent_margin)</span>
+        in debt, and
         <span class="tx_value">$:scrub.dollar_value(equity)</span>
         across
         <span class="tx_value">$:equity_count</span>
-        unique equities. Spent
-        <span class="loss">$:scrub.dollar_value(spent_margin)</span>
-        worth of margin.
+        unique equities.
     </div>
 
     <hr>
