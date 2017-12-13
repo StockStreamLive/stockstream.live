@@ -37,6 +37,7 @@ t_globals = dict(datestr=web.datestr,
                  bleach=bleach)
 
 urls = (
+    '/referral', 'Referral',
     '/robots.txt', 'Robots',
     '/info/*(.+)', 'Info',
     '/symbol/*(.+)', 'Symbol',
@@ -44,7 +45,7 @@ urls = (
     '/player/*(.+)', 'Player',
     '/dashboard*(.+)', 'Dashboard',
     '/charts*(.+)', 'Charts',
-    '/*(.+)', 'Index'
+    '/*(.+)', 'Index',
 )
 
 
@@ -69,6 +70,19 @@ class Robots:
 
     def GET(self):
         return "User-agent: *\nAllow: /"
+
+
+class Referral:
+    def __init__(self):
+        pass
+
+    def POST(self, url):
+        referral_code = stockstream.api.get_referral_code()
+        raise web.seeother(referral_code)
+
+    def GET(self):
+        referral_code = stockstream.api.get_referral_code()
+        raise web.seeother(referral_code)
 
 
 class Info:

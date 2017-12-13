@@ -152,6 +152,10 @@ def get_ranked_players():
     return get_api_request("/v1/players")
 
 
+def get_referral_code():
+    return get_api_request("/v1/referral")
+
+
 def get_portfolio():
     return get_api_request("/v1/portfolio/current")
 
