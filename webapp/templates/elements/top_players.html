@@ -20,11 +20,11 @@ $def with (top_players_list)
                 <tr><td>Trades Influenced</td><td>$:profile_stats['total_influenced']</td></tr>
                 <tr>
                     <td>Realized Return</td>
-                    <td><span class="$:("loss" if profile_stats['realized_return'] < 0 else "profit")">$:scrub.dollar_change(profile_stats['realized_return'])</span></td>
+                    <td><span class="$:('loss' if profile_stats['realized_return'] < 0 else 'profit')">$:scrub.dollar_change(profile_stats['realized_return'])</span></td>
                 </tr>
                 <tr>
                     <td>Percent Return</td>
-                    <td><span class="$:("loss" if profile_stats['total_percent_return'] < 0 else "profit")">$:scrub.percent_change(profile_stats['total_percent_return'])</span></td>
+                    <td><span class="$:('loss' if profile_stats['total_percent_return'] < 0 else 'profit')">$:scrub.percent_change(profile_stats['total_percent_return'])</span></td>
                 </tr>
                 </tbody>
             </table>​

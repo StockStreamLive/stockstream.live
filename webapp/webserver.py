@@ -40,6 +40,7 @@ urls = (
     '/referral', 'Referral',
     '/robots.txt', 'Robots',
     '/info/*(.+)', 'Info',
+    '/scores*(.+)', 'Scores',
     '/symbol/*(.+)', 'Symbol',
     '/portfolio*(.+)', 'Portfolio',
     '/player/*(.+)', 'Player',
@@ -117,6 +118,25 @@ class Charts:
             }
 
         return render.pages.charts(page_model)
+
+
+class Scores:
+    def __init__(self):
+        pass
+
+    def POST(self, url):
+        raise web.seeother('/')
+
+    @cached()
+    def GET(self, url):
+
+        ranked_scores = stockstream.api.get_ranked_scores()
+
+        page_model = {
+            'ranked_scores': ranked_scores
+        }
+
+        return render.pages.scores(page_model)
 
 
 class Symbol:

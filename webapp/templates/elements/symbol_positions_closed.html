@@ -31,8 +31,8 @@ $ tableBodyClass = scrub.id(title) + "Body"
         $for position in positions:
             $ symbol = position['symbol']
 
-            $ buy_time = datetime.fromtimestamp(position['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
-            $ sell_time = datetime.fromtimestamp(position['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
+            $ buy_time = scrub.human_date(position['buy_time'])
+            $ sell_time = scrub.human_date(position['sell_time'])
 
             $ sell_price = position['sell_price']
             $ buy_price = position['buy_price']
