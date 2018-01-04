@@ -41,7 +41,7 @@ $ tableBodyClass = scrub.id(title) + "Body"
 
             $ symbol = position['symbol']
 
-            $ buy_time = datetime.fromtimestamp(position['buy_time'] / 1000).strftime('%m-%d-%y %H:%M')
+            $ buy_time = scrub.human_date(position['buy_time'])
 
             $ recent_price = position['recent_price']
             $ buy_price = position['buy_price']
@@ -52,7 +52,7 @@ $ tableBodyClass = scrub.id(title) + "Body"
 
             <tr>
                 <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
-                <td>$:buy_time</td>
+                <td class="timestamp">$:buy_time</td>
                 <td>$:scrub.dollar_value(buy_price)</td>
                 <td>$:scrub.dollar_value(recent_price)</td>
                 <td>$:scrub.percent_value(influence_percent)</td>

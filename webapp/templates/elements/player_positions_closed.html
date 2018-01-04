@@ -33,8 +33,8 @@ $ tableBodyClass = scrub.id(title) + "Body"
         $for position in positions:
             $ symbol = position['symbol']
 
-            $ buy_time = datetime.fromtimestamp(position['buy_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
-            $ sell_time = datetime.fromtimestamp(position['sell_time'] / 1000).strftime('%m-%d-%y&nbsp;%H:%M')
+            $ buy_time = scrub.human_date(position['buy_time'])
+            $ sell_time = scrub.human_date(position['sell_time'])
 
             $ sell_price = position['sell_price']
             $ buy_price = position['buy_price']
@@ -45,8 +45,8 @@ $ tableBodyClass = scrub.id(title) + "Body"
 
             <tr>
                 <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
-                <td>$:buy_time</td>
-                <td>$:sell_time</td>
+                <td class="timestamp">$:buy_time</td>
+                <td class="timestamp">$:sell_time</td>
                 <td>$:scrub.dollar_value(buy_price)</td>
                 <td>$:scrub.dollar_value(sell_price)</td>
                 <td>$:scrub.percent_value(influence_percent)</td>
