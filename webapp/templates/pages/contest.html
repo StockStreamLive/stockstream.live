@@ -1,0 +1,311 @@
+$def with (model)
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    $:render.elements.header()
+
+    <style>
+        h2 {
+            color: white;
+            line-height: 1.5;
+            text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+            text-shadow:
+                -4px -4px 0 #1b2840,
+                1px -1px 0 #1b2840,
+                -1px 1px 0 #1b2840,
+                1px 1px 0 #1b2840;
+            filter: drop-shadow(0px 0px 5px cyan);
+        }
+
+        table td {
+            padding: 10px;
+        }
+
+        th {
+            color: SkyBlue;
+        }
+
+        .cheddar_link {
+            color: #ff0ba8;
+        }
+
+        .contest_intro {
+            width: 70%;
+            line-height: 1.4;
+            margin-bottom: 25px;
+        }
+
+        .go_button_label {
+            margin-top: 5px;
+        }
+
+        .go_button {
+            -webkit-appearance: button;
+            -moz-appearance: button;
+            appearance: button;
+
+            text-decoration: none;
+            color: initial;
+
+            text-align: center;
+
+            width: 400px;
+            height: 50px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.9em;
+            padding: 4px 4px;
+            color: white;
+            background-color: black;
+            border: 1px solid magenta;
+            cursor: pointer;
+            transition: background-color .5s ease-out;
+        }
+
+        .go_button:hover {
+            border: 1px solid white;
+            color: black;
+            background: cyan;
+        }
+
+        table td:first-child {
+            color: wheat;
+        }
+
+        .special {
+            color: wheat;
+        }
+
+        .hilighted {
+            color: DarkOrange;
+        }
+
+        .warn {
+            margin: 5px;
+            color: red;
+        }
+
+        ol {
+            text-align: left;
+        }
+    </style>
+
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@stockstream" />
+<meta name="twitter:creator" content="@stockstream" />
+
+<meta content="text/html; charset=UTF-8" name="Content-Type" />
+<meta property="twitter:card" content="image" />
+<meta property="twitter:title" content="StockStream is live!" />
+<meta property="twitter:description" content="Play StockStream and win Real Money!" />
+<meta property="og:image" content="/static/plaque-contest.png" />
+
+</head>
+
+<body>
+
+$:render.elements.navbar()
+
+<br>
+
+<center>
+
+    <h1>Winning Real Money with StockStream</h1>
+
+    <div class="contest_intro">
+        Between January 17th and March 7th, 2017 <a class="cheddar_link" href="https://cheddar.com">Cheddar</a>
+        will be running a contest in which top performing players in StockStream will be rewarded with prizes.
+        <br>
+        Collectively, we're handing out <span class="profit">thousands of dollars in prize money!</span>
+        <hr>
+        The guide below will explain the game and rules in detail. If you want to get started immediately, you only need to follow 3 simple steps.
+        <br>
+        <ol>
+            <li>Read the Official Rules, by clicking <a href="/static/contest_rules.pdf">here</a>.</li>
+            <li>Register your username by clicking <a href="/register">here</a>.
+                <br>
+                <span class="hilighted">You <em>must</em> complete this form. You will see a success message and get an email confirmation upon completion</span>.</li>
+            <li>Join the game by clicking <a href="https://twitch.tv/stockstream">here</a>.</li>
+        </ol>
+        <hr>
+        If you are having trouble signing up, click <a href="/static/contest_rules.pdf">here</a> to join the StockStream Discord where you may ask for help.
+    </div>
+
+    <hr>
+    <br>
+
+    <h1>Prizes</h1>
+    <div class="contest_intro">
+        The prize pool is divided into two parts. The <span class="special">StockStream Weekly Challenge</span> and the
+        <span class="special">StockStream Sweepstakes</span>.
+        <br>
+        <br>
+        The <span class="special">StockStream Weekly Challenge</span>
+        will run for 6 weeks, and each week, the <span class="hilighted">top 5 players</span> will collectively receive <span class="profit">$$225</span> in cash
+        and <span class="profit">300</span> sweepstakes entries.
+        <br>
+        <br>
+        The <span class="special">StockStream Sweepstakes</span>
+        will take place at the end of the 6 weeks and total of <span class="profit">$$3,500</span> will be given to <span class="hilighted">3 sweepstakes winners</span>.
+    </div>
+
+
+    <h2>StockStream Weekly Challenge</h2>
+    <div class="contest_intro">
+        The <span class="special">StockStream Weekly Challenge</span> will run on the following dates. Each week will feature a set of
+        <span class="hilighted">5 winners</span> based
+        on their performance that week. Each winner of the <span class="special">Weekly Challenge</span> will win a <span class="profit">cash</span> prize as well as a number of
+        Entries into the <span class="special">StockStream Sweepstakes</span>, with a chance to win up to <span class="profit">$$2,000</span>! (details below).
+    </div>
+
+    <h3>Weekly Challenge Dates</h3>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Event</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Winner Announcement</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr><td>Weekly Challenge I</td><td>January 17th</td><td>January 23rd</td><td>January 24th</td></tr>
+            <tr><td>Weekly Challenge II</td><td>January 24th</td><td>January 30th</td><td>January 31st</td></tr>
+            <tr><td>Weekly Challenge III</td><td>January 31st</td><td>February 6th</td><td>February 7th</td></tr>
+            <tr><td>Weekly Challenge IV</td><td>February 7th</td><td>February 13th</td><td>February 14th</td></tr>
+            <tr><td>Weekly Challenge V</td><td>February 14th</td><td>February 20th</td><td>February 21st</td></tr>
+            <tr><td>Weekly Challenge VI</td><td>February 21st</td><td>February 27th</td><td>February 28th</td></tr>
+            <tr><td>Sweepstakes</td><td>January 17th</td><td>February 27th</td><td>March 7th</td></tr>
+        </tbody>
+    </table>
+
+    <hr>
+
+    <h3>Weekly Challenge Prizes</h3>
+
+    <div class="contest_intro">
+        Winners of the <span class="special">Weekly Challenge</span> will receive a <span class="profit">cash</span> prize as well as entries into the
+        <span class="special">StockStream Sweepstakes</span>.
+        In the event of a tie, the <span class="profit">cash</span> will be split amongst the winners but each will receive equal <span class="special">Sweepstakes Entries</span>.
+    </div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>Rank</th>
+            <th>Cash Prize</th>
+            <th>Sweepstakes</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr><td>1st Place</td><td><span class="profit">$$100</span></td><td>100 Entries</td></tr>
+            <tr><td>2nd Place</td><td><span class="profit">$$50</span></td><td>80 Entries</td></tr>
+            <tr><td>3rd Place</td><td><span class="profit">$$25</span></td><td>60 Entries</td></tr>
+            <tr><td>4th Place</td><td><span class="profit">$$25</span></td><td>40 Entries</td></tr>
+            <tr><td>5th Place</td><td><span class="profit">$$25</span></td><td>20 Entries</td></tr>
+        </tbody>
+    </table>
+
+    <br>
+    <hr>
+
+    <h2>StockStream Sweepstakes</h2>
+
+    <div class="contest_intro">
+        Winners of the <span class="special">Weekly Challenge</span> will receive entries into the <span class="special">StockStream Sweepstakes</span>.
+        At the end of the Sweepstakes period a drawing will be held, and each player with entries
+        will have a chance to win the following <span class="profit">cash</span> prizes.
+    </div>
+
+    <table>
+        <tr><td>Grand Prize</td><td><span class="profit">$$2,000</span></td></tr>
+        <tr><td>First Prize</td><td><span class="profit">$$1,000</span></td></tr>
+        <tr><td>Second Prize</td><td><span class="profit">$$500</span></td></tr>
+    </table>
+
+    <br>
+    <br>
+
+    <h1>How To Enter</h1>
+
+    <div class="contest_intro">
+        To enter, click the button below and fill out the registration form.
+        The contest is free to enter and open to legal residents of The United States and some parts of Canada.
+        Other restrictions apply, please read the full rules on the registration page for more details.
+    </div>
+    <a class="go_button" href="/register"><span class="go_button_label">Register</span></a>
+
+    <br>
+    <br>
+    <br>
+
+    <h1>How To Play</h1>
+
+    <div class="contest_intro">
+        To play, visit the <a href="https://twitch.tv/stockstream">StockStream Twitch channel</a>.
+        StockStream is a voting-based stock market game. You may vote to buy or sell any stock by issuing
+        <span class="hilighted">!buy </span> and <span class="hilighted">!sell</span> commands.
+        At the end of each round, the votes are counted and the top voted command is executed.
+        If you voted for the command that won the round, you gain <span class="hilighted">influence</span>
+        on that purchase, and now have an <span class="hilighted">open position</span>.
+        <br>
+        <div class="warn">
+            During each Weekly Challenge, you must open at least 5 positions <em>and</em> close at least 5 positions
+            to be eligible to win. Only stocks which cost more than $$5 will qualify.
+        </div>
+        Your open and closed positions can be found on your <span class="hilighted">profile page</span> and eligible positions will be
+        <span class="hilighted">hilighted</span>.
+        Use the <span class="hilighted">#w</span> command in the chat to get a link to your page.
+        <br>
+        <br>
+        For a full tutorial on how to play <span class="special">StockStream</span> click <a href="/info/help">here</a>.
+    </div>
+
+    <br>
+    <br>
+
+    <h1>How To Win</h1>
+
+    <div class="contest_intro">
+        Players are ranked by <span class="hilighted">realized percentage return</span>.
+
+        Your <span class="hilighted">realized percentage return</span> is calculated by computing the percentage return
+        on the money you have <span class="hilighted">spent</span> and <span class="hilighted">sold</span>.
+
+        Note that the amount you <span class="hilighted">spent</span> is the price of a stock divided by the number of players that voted along with you.
+        For example, if two players vote to buy a stock worth $$100, each player has <span class="hilighted">spent</span> $$50.
+        If that stock is sold for $$102, each player has profited by $$1 and therefore has a
+        <span class="hilighted">realized percentage return</span> of <span class="hilighted">2%</span>.
+    </div>
+
+    <br>
+    <br>
+
+    <h1>Things to remember</h1>
+
+    <div class="contest_intro">
+        Only stocks whose purchase price is <span class="hilighted">$$5</span> or more will qualify.
+        <br>
+        You must open and close at least <span class="hilighted">5 positions</span> each week to be eligible for the
+        <span class="special">Weekly Challenge</span>.
+        <br>
+        Only <span class="hilighted">closed positions</span> count towards your final score.
+    </div>
+
+    <hr>
+    <br>
+
+    <h2>Ready to win some cash?</h2>
+
+    <a class="go_button" href="https://twitch.tv/stockstream"><span class="go_button_label">Let's do this!</span></a>
+
+    $:render.elements.footer()
+
+</center>
+
+</body>
+
+</html>

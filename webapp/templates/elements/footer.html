@@ -16,13 +16,77 @@ $def with ()
         margin-top: 150px;
         width: 100%;
     }
+
+    .social_media_container {
+        margin-left: 0;
+    }
+
+    .social_media {
+        overflow: hidden;
+        height: 45px;
+        border-style: none;
+        margin-top: 40px;
+        margin-bottom: 10px;
+        transition: all .05s ease;
+    }
+
+    .social_media:hover {
+        transform: scale(1.2);
+    }
+
+    #twitchlogo {
+        filter: drop-shadow(0px 0px 15px #6441A4);
+    }
+
+    #twitchlogo:hover {
+        filter: drop-shadow(0px 0px 25px #6441A4);
+    }
+
+    #robinhoodlogo {
+        filter: drop-shadow(0px 0px 15px gold);
+    }
+
+    #robinhoodlogo:hover {
+        filter: drop-shadow(0px 0px 25px gold);
+    }
+
+    #stocktwitslogo {
+        filter: drop-shadow(0px 0px 15px #3f5770);
+    }
+
+    #stocktwitslogo:hover {
+        filter: drop-shadow(0px 0px 25px #3f5770);
+    }
+
+    #twitterlogo {
+        filter: drop-shadow(0px 0px 15px #1da1f2);
+    }
+
+    #twitterlogo:hover {
+        filter: drop-shadow(0px 0px 25px #1da1f2);
+    }
+
+    #discordlogo {
+        filter: drop-shadow(0px 0px 15px #7289da);
+    }
+
+    #discordlogo:hover {
+        filter: drop-shadow(0px 0px 25px #7289da);
+    }
 </style>
 
 
 <footer class="footer">
     <center>
+        <div class="social_media_container">
+            <a target="_blank" href="https://twitch.tv/stockstream"><img id="twitchlogo" class="social_media" src="/static/twitch-logo.png"/></a>
+            <a target="_blank" href="https://twitter.com/stockstream"><img id="twitterlogo" class="social_media" src="/static/twtr-logo.png"/></a>
+            <a target="_blank" href="https://stocktwits.com/stockstream"><img id="stocktwitslogo" class="social_media" src="/static/stocktwits-logo.png"/></a>
+            <a target="_blank" href="https://discord.gg/xnrKgEj"><img id="discordlogo" class="social_media" src="/static/discord-logo.png"/></a>
+        </div>
         <br>
         <a href="https://cheddar.com">&copy; 2017 Cheddar, Inc</a> |
+        <a href="https://cheddar.com/privacy">Privacy Policy</a> |
         <a href="/info/api">API Documentation</a>
         <br>
     </center>

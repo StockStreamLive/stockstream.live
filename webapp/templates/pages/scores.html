@@ -26,6 +26,17 @@ $ scores = model['ranked_scores']
         );
     </script>
 
+    <style>
+        #scoresContainer {
+            clear: both;
+        }
+
+        .score_name_link {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+
 </head>
 
 <body>
@@ -36,47 +47,18 @@ $:render.elements.navbar()
 
 <center>
 
-    <h2>Top Scores</h2>
+    <h1>Top Scores</h1>
 
+    <hr/>
 
-    <table id="topScores">
-        <thead>
-        <tr>
-            <th>Rank</th>
-            <th>Player</th>
-            <th>Return %</th>
-            <th>Return $$</th>
-            <th>Trades</th>
-            <th>Bought</th>
-            <th>Sold</th>
-        </tr>
-        </thead>
-        <tbody id="scores">
-        $for i in range(0, len(scores)):
-            $ score = scores[i]
-            $ trades = score['qualifiedTrades']
+    $:render.elements.top_three(scores)
 
-            $if trades < 10:
-                $ break
+    <br>
 
-            $ player = score['playerId']
-            $ decimal_return = score['decimalReturn']
-            $ dollar_return = score['dollarReturn']
-            $ bought = score['dollarsSpent']
-            $ sold = score['dollarsSold']
-
-
-            <tr>
-                <td class="rank">$:(i+1)</td>
-                <td class="player"><a href="/player/$:player">$:player.split(":")[1]</a></td>
-                <td><span class="$:('loss' if decimal_return < 0 else 'profit')">$:scrub.percent_change(decimal_return * 100)</span></td>
-                <td><span class="$:('loss' if dollar_return < 0 else 'profit')">$:scrub.dollar_change(dollar_return)</span></td>
-                <td class="trades">$:trades</td>
-                <td><span>$:scrub.dollar_value(bought)</span></td>
-                <td><span>$:scrub.dollar_value(sold)</span></td>
-            </tr>
-        </tbody>
-    </table>
+    <div id="scoresContainer">
+        $for i in range(3, len(scores)):
+            $:render.elements.score_box(scores[i], i+1)
+    </div>
 
     $:render.elements.footer()
 

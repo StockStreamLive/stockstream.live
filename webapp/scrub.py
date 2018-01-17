@@ -1,11 +1,19 @@
 from calendar import timegm
 from dateutil.parser import parse
 from datetime import datetime
+import inflect
+
+inflection_engine = inflect.engine()
+
 
 def create_timestamp(date_str):
     timestamp = parse(date_str)
     timestamp = timegm(timestamp.timetuple()) * 1000
     return timestamp
+
+
+def inflect(number):
+    return inflection_engine.ordinal(number)
 
 
 def human_date(timestamp_ms):

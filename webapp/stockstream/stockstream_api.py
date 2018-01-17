@@ -2,10 +2,15 @@ import config
 import robinhood
 import time
 import httputil
+import json
 
 
 def get_api_request(request):
     return httputil.get_json_object_from_url(config.SS_API_ENDPOINT + request)
+
+
+def post_api_request(request, obj):
+    return httputil.post_object_to_url(config.SS_API_ENDPOINT + request, json.dumps(obj))
 
 
 def get_current_portfolio():
@@ -184,3 +189,11 @@ def get_overview(portfolio):
         "start_value": 50000,
         "net_worth": get_net_worth(portfolio)
     }
+
+
+def get_registration_status(player_id):
+    return get_api_request("/v1/registered/{}".format(player_id))
+
+
+def register_contest_player(registration_object):
+    return post_api_request("/v1/register", registration_object)

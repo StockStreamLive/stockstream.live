@@ -5,6 +5,7 @@ $ player_profile = model['player_profile']
 $ profile_stats = model['profile_stats']
 $ twitch_user = model['twitch_user']
 $ wallet = model['wallet']
+$ registered_for_contest = model['registration_status']['registered']
 
 $ total_trades = float(profile_stats['profitable_trades'] + profile_stats['unprofitable_trades'])
 $ total_trades = 1 if total_trades == 0 else total_trades
@@ -52,6 +53,11 @@ $ percent_profitable = (profile_stats['profitable_trades'] / total_trades) * 100
             color: 007857;
             text-decoration: underline;
         }
+
+        .promo_qualified {
+            outline: 1px solid aqua;
+            background-color: #284b50;
+        }
     </style>
 
 </head>
@@ -80,7 +86,7 @@ $:render.elements.navbar()
             <tr><td>Trades Influenced</td><td>$:profile_stats['total_influenced']</td></tr>
             <tr>
                 <td>Score</td>
-                <td><span class="$:("loss" if profile_stats['total_percent_return'] < 0 else "profit")">$:scrub.percent_change(profile_stats['total_percent_return'])</span></td>
+                <td><span class="$:('loss' if profile_stats['total_percent_return'] < 0 else 'profit')">$:scrub.percent_change(profile_stats['total_percent_return'])</span></td>
             </tr>
             </tbody>
         </table>​
@@ -101,22 +107,22 @@ $:render.elements.navbar()
             <td>Unrealized</td>
             <td><span>$:scrub.dollar_value(profile_stats['unrealized_buy_price'])</span></td>
             <td><span>$:scrub.dollar_value(profile_stats['unrealized_sell_price'])</span></td>
-            <td><span class="$:("loss" if profile_stats['unrealized_return'] < 0 else "profit")">$:scrub.dollar_change(profile_stats['unrealized_return'])</span></td>
-            <td><span class="$:("loss" if profile_stats['unrealized_percent_return'] < 0 else "profit")">$:scrub.percent_change(profile_stats['unrealized_percent_return'])</span></td>
+            <td><span class="$:('loss' if profile_stats['unrealized_return'] < 0 else 'profit')">$:scrub.dollar_change(profile_stats['unrealized_return'])</span></td>
+            <td><span class="$:('loss' if profile_stats['unrealized_percent_return'] < 0 else 'profit')">$:scrub.percent_change(profile_stats['unrealized_percent_return'])</span></td>
         </tr>
         <tr>
             <td>Realized</td>
             <td><span>$:scrub.dollar_value(profile_stats['realized_buy_price'])</span></td>
             <td><span>$:scrub.dollar_value(profile_stats['realized_sell_price'])</span></td>
-            <td><span class="$:("loss" if profile_stats['realized_return'] < 0 else "profit")">$:scrub.dollar_change(profile_stats['realized_return'])</span></td>
-            <td><span class="$:("loss" if profile_stats['realized_percent_return'] < 0 else "profit")">$:scrub.percent_change(profile_stats['realized_percent_return'])</span></td>
+            <td><span class="$:('loss' if profile_stats['realized_return'] < 0 else 'profit')">$:scrub.dollar_change(profile_stats['realized_return'])</span></td>
+            <td><span class="$:('loss' if profile_stats['realized_percent_return'] < 0 else 'profit')">$:scrub.percent_change(profile_stats['realized_percent_return'])</span></td>
         </tr>
         <tr>
             <td>Total</td>
             <td><span>$:scrub.dollar_value(profile_stats['total_buy_price'])</span></td>
             <td><span>$:scrub.dollar_value(profile_stats['total_sell_price'])</span></td>
-            <td><span class="$:("loss" if profile_stats['total_return'] < 0 else "profit")">$:scrub.dollar_change(profile_stats['total_return'])</span></td>
-            <td><span class="$:("loss" if profile_stats['total_percent_return'] < 0 else "profit")">$:scrub.percent_change(profile_stats['total_percent_return'])</span></td>
+            <td><span class="$:('loss' if profile_stats['total_return'] < 0 else 'profit')">$:scrub.dollar_change(profile_stats['total_return'])</span></td>
+            <td><span class="$:('loss' if profile_stats['total_percent_return'] < 0 else 'profit')">$:scrub.percent_change(profile_stats['total_percent_return'])</span></td>
         </tr>
         </tbody>
     </table>​
@@ -132,7 +138,7 @@ $:render.elements.navbar()
 
     <hr>
 
-    $:render.elements.player_positions_closed("Closed Positions", player_profile['influenced_orders']['closed'])
+    $:render.elements.player_positions_closed("Closed Positions", player_profile['influenced_orders']['closed'], registered_for_contest)
 
     $:render.elements.footer()
 

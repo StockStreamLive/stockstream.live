@@ -1,0 +1,33 @@
+$def with (score, rank)
+
+$if 'channel' in score:
+    $ decimal_return = score['decimalReturn']
+    $ trades = score['qualifiedTrades']
+
+    $ disqualified = trades < 5
+    $ image_class = 'desaturated' if disqualified else ''
+    $ box_class = 'disabled' if disqualified else 'active'
+    $ username_class = 'username_disabled' if disqualified else 'username_active'
+    $ rank_class = 'rank_disabled' if disqualified else 'rank_active'
+
+    $ score_class = 'loss' if decimal_return < 0 else 'profit'
+    $ score_class = '' if disqualified else score_class
+
+    <div id="scoreBox" class="$:box_class rank$:rank">
+        <center>
+            <img class="avatar $:image_class" src="$:score['channel']['logo']"/>
+            <h3 class="$:username_class"><a class="score_name_link" href="/player/twitch:$:score['channel']['name']">$:score['channel']['display_name']</a></h3>
+        </center>
+
+        <span class="$:rank_class">$:scrub.inflect(rank) place</span>
+
+        <br>
+        <br>
+
+        <table id="overview">
+            <tbody id="overviewBody">
+            <tr><td>Score</td><td><span class="$:score_class">$:scrub.percent_change(decimal_return * 100)</span></td></tr>
+            <tr><td>Trades</td><td class="trades">$:trades</td></tr>
+            </tbody>
+        </table>​
+    </div>

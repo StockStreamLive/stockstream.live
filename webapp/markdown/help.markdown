@@ -71,6 +71,8 @@ To check your wallet balance, use the **#w** command. To place a trade in your w
 
 Wallet commands start with the **#** character.
 
+**Your wallet performance is *not* included in scoring calculations of contests or promotions.**
+
 <br>
 <br>
 

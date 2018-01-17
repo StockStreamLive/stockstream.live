@@ -1,0 +1,107 @@
+$def with (model)
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>Contest Registration</title>
+
+    $:render.elements.header()
+
+    <style>
+        #help {
+            width: 50%;
+            line-height: 1.5;
+        }
+
+        input[type="submit"] {
+            width: 400px;
+            height: 50px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5vw;
+            padding: 4px 4px;
+            color: white;
+            background-color: black;
+            border: 1px solid magenta;
+            cursor: pointer;
+            transition: background-color .5s ease-out;
+        }
+
+        input[type="submit"]:hover {
+            border: 1px solid white;
+            color: black;
+            background: cyan;
+        }
+
+        input[type=checkbox]
+        {
+            /* Double-sized Checkboxes */
+            -ms-transform: scale(2); /* IE */
+            -moz-transform: scale(2); /* FF */
+            -webkit-transform: scale(2); /* Safari and Chrome */
+            -o-transform: scale(2); /* Opera */
+            padding: 10px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+$:render.elements.navbar()
+
+<br>
+
+<center>
+
+    <h1>StockStream Contest Registration</h1>
+
+    <hr>
+
+    <div id="help">
+        Please fill out the form below to become registered in the Cheddar StockStream Challenge.
+        No purchase necessary to enter or win. You must first read and agree to the <a>Official Rules</a>.
+    </div>
+
+    <hr>
+    <br/>
+    <br/>
+
+    <h2>Contest Registration Form</h2>
+
+    <hr/>
+
+    <object data="/static/contest_rules.pdf" type="application/pdf" width="60%" height="600px">
+       <p><b>This browser does not support PDFs.</b> Please download the rules to view them <a href="/static/contest_rules.pdf">Contest Rules</a>.</p>
+    </object>
+
+    <hr/>
+
+    <form action="/register" method="POST">
+        <table id="overview">
+            <tbody id="overviewBody">
+                <tr><td><input name="email" required></td><td><span>Email Address</span></td></tr>
+                <tr><td><input name="twitch_username" required></td><td><span>Twitch Username</span></td></tr>
+                <tr><td><input name="zip_code" required></td><td><span>Zip/Postal Code</span></td></tr>
+            </tbody>
+        </table>​
+        <br/>
+        <input type="checkbox" name="tos" value="tos" required> I have read and agree to the Official Rules
+        <br/>
+        <input type="checkbox" name="optin" value="optin" checked required> I agree to receive email communications from Cheddar
+        <br/>
+        <br/>
+        <div class="g-recaptcha" data-sitekey="6Lf1e0AUAAAAAJSz3ZpZniVx0C8YwUt1BOlxDQEB"></div>
+        <br/>
+        <input type="submit" value="Join Contest">
+    </form>
+
+    $:render.elements.footer()
+
+</center>
+
+</body>
+
+</html>

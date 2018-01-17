@@ -31,69 +31,8 @@ $:render.elements.header()
         transform: scale(1.2);
     }
 
-    .social_media_container {
-        margin-left: 0;
-    }
-
-    .social_media {
-        overflow: hidden;
-        height: 45px;
-        border-style: none;
-        margin-top: 40px;
-        margin-bottom: 10px;
-        transition: all .05s ease;
-    }
-
-    .social_media:hover {
-        transform: scale(1.2);
-    }
-
-    #twitchlogo {
-        filter: drop-shadow(0px 0px 15px #6441A4);
-    }
-
-    #twitchlogo:hover {
-        filter: drop-shadow(0px 0px 25px #6441A4);
-    }
-
-    #robinhoodlogo {
-        filter: drop-shadow(0px 0px 15px gold);
-    }
-
-    #robinhoodlogo:hover {
-        filter: drop-shadow(0px 0px 25px gold);
-    }
-
-    #stocktwitslogo {
-        filter: drop-shadow(0px 0px 15px #3f5770);
-    }
-
-    #stocktwitslogo:hover {
-        filter: drop-shadow(0px 0px 25px #3f5770);
-    }
-
-    #twitterlogo {
-        filter: drop-shadow(0px 0px 15px #1da1f2);
-    }
-
-    #twitterlogo:hover {
-        filter: drop-shadow(0px 0px 25px #1da1f2);
-    }
-
-    #discordlogo {
-        filter: drop-shadow(0px 0px 15px #7289da);
-    }
-
-    #discordlogo:hover {
-        filter: drop-shadow(0px 0px 25px #7289da);
-    }
-
-    .cheddar {
-        color: #ff0ba8;
-    }
-
     .gamebox {
-        margin-top: 80px;
+        margin-top: 60px;
         margin-bottom: 60px;
         white-space: nowrap;
         display: inline-flex;
@@ -154,9 +93,50 @@ $:render.elements.header()
         filter: drop-shadow(0px 0px 25px cyan);
     }
 
-    #heading {
-        margin-top: 40px;
+    #contestlogo {
+        margin-top: 15px;
+        filter: drop-shadow(0px 0px 15px #00d097);
     }
+
+    #contestlogo:hover {
+        filter: drop-shadow(0px 0px 25px #00d097);
+        transform: scale(1.2);
+    }
+
+    .scoreslink {
+        font-size: 2em;
+        color: black;
+        line-height: 1.5;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+        text-shadow:
+            -2px -2px 0 gold,
+            1px -1px 0 gold,
+            -1px 1px 0 gold,
+            1px 1px 0 gold;
+    }
+
+    .scoreslink:hover {
+        color: black;
+        line-height: 1.5;
+        text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+        text-shadow:
+            -2px -2px 0 gold,
+            1px -1px 0 gold,
+            -1px 1px 0 gold,
+            1px 1px 0 gold;
+        filter: drop-shadow(0px 0px 5px gold);
+    }
+
+    .contest_title {
+        color: white;
+        font-size: 1.2em;
+        text-shadow:
+            -2px -2px 0 green,
+            1px -1px 0 green,
+            -1px 1px 0 green,
+            1px 1px 0 green;
+    }
+
 </style>
 
 <meta content="text/html; charset=UTF-8" name="Content-Type" />
@@ -182,6 +162,16 @@ $:render.elements.navbar()
     <h2>World's First Multiplayer Stock Market Game Using Real Money</h2>
     <hr>
 
+    <br>
+
+    <hr>
+    <span class="contest_title">Now you can win <span class="profit">real money</span> playing StockStream! <br> Click the image below to get started.</span>
+    <br>
+    <br>
+    <a href="/contest" class="side_link"><img id="contestlogo" src="/static/plaque-contest.png"></a>
+    <br>
+    <hr>
+
     <div class="gamebox">
         <iframe class="player"
                 src="https://player.twitch.tv/?channel=stockstream"
@@ -205,7 +195,9 @@ $:render.elements.navbar()
 
     <div>
 
+        <a href="/info/help" class="side_link"><img id="helplogo" class="follow" src="/static/plaque-help.png"/></a>
         <a href="/referral" class="side_link"><img id="robinhoodlogo" class="follow" src="/static/plaque-robinhood.png"/></a>
+        <a href="/scores" class="side_link"><img id="scoreslogo" class="follow" src="/static/plaque-scores.png"/></a>
 
         <br>
         <br>
@@ -220,31 +212,22 @@ $:render.elements.navbar()
         <br>
         <br>
 
-        <div class="social_media_container">
-            <a target="_blank" href="https://twitch.tv/stockstream"><img id="twitchlogo" class="social_media" src="/static/twitch-logo.png"/></a>
-            <a target="_blank" href="https://twitter.com/stockstream"><img id="twitterlogo" class="social_media" src="/static/twtr-logo.png"/></a>
-            <a target="_blank" href="https://stocktwits.com/stockstream"><img id="stocktwitslogo" class="social_media" src="/static/stocktwits-logo.png"/></a>
-            <a target="_blank" href="https://discord.gg/xnrKgEj"><img id="discordlogo" class="social_media" src="/static/discord-logo.png"/></a>
-        </div>
-
         <br>
 
-        <a href="/info/help" class="side_link"><img id="helplogo" class="follow" src="/static/plaque-help.png"/></a>
 
 
     </div>
 
     <br>
-    $:render.elements.order_stats(model)
     <hr>
-    <br>
 
     <h2>Top Players</h2>
     <br>
 
-    <div style="width:85%;">
-        $:render.elements.top_players(model['top_players_list'])
-    </div>
+    $:render.elements.top_three(model['ranked_scores'])
+
+    <hr>
+    <span class="scores"><a class="scoreslink" href="/scores">See All Scores >>></a></span>
 
     $:render.elements.footer()
 

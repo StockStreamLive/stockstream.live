@@ -55,8 +55,9 @@ def organize_positions(positions, symbol_to_quote):
                 "influence": influence,
                 "liability": liability,
                 "quote": quote,
+                "liable_players": liable_players,
                 "wallet_order": position['walletOrder'],
-                "liable_players": liable_players
+                "promo_qualified": position['qualifiedForPromotion'],
             })
 
         else:
@@ -79,7 +80,8 @@ def organize_positions(positions, symbol_to_quote):
                 "liability": liability,
                 "influence": influence,
                 "liable_players": liable_players,
-                "wallet_order": position['walletOrder']
+                "wallet_order": position['walletOrder'],
+                "promo_qualified": position['qualifiedForPromotion'],
             })
 
     influenced_orders['closed'] = list(reversed(influenced_orders['closed']))
