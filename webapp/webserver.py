@@ -234,6 +234,7 @@ class Player:
     def POST(self, url):
         raise web.seeother('/')
 
+    @cached()
     def GET(self, scoped_username):
         scoped_username = scoped_username.lower()
         name = scoped_username.split(":")[1]
