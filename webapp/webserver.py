@@ -41,6 +41,8 @@ urls = (
     '/robots.txt', 'Robots',
     '/info/*(.+)', 'Info',
     '/scores*(.+)', 'Scores',
+    '/register*(.+)', 'Register',
+    '/contest*(.+)', 'Contest',
     '/symbol/*(.+)', 'Symbol',
     '/portfolio*(.+)', 'Portfolio',
     '/player/*(.+)', 'Player',
@@ -127,16 +129,62 @@ class Scores:
     def POST(self, url):
         raise web.seeother('/')
 
-    @cached()
     def GET(self, url):
 
-        ranked_scores = stockstream.api.get_ranked_scores()
+        ranked_scores = stockstream.scores.get_ranked_scores()
 
         page_model = {
             'ranked_scores': ranked_scores
         }
 
         return render.pages.scores(page_model)
+
+
+class Contest:
+    def __init__(self):
+        pass
+
+    def POST(self, url):
+        raise web.seeother('/')
+
+    def GET(self, url):
+
+        page_model = {
+
+        }
+
+        return render.pages.contest(page_model)
+
+
+class Register:
+    def __init__(self):
+        pass
+
+    def POST(self, url):
+        post_data = web.input(twitch_username="", email="", zip_code="", captcha="")
+
+        registration_object = {
+            "platform": "twitch",
+            "email_address": post_data.email,
+            "username": post_data.twitch_username,
+            "zip_code": post_data.zip_code,
+            "g_recaptcha_response": post_data['g-recaptcha-response']
+        }
+
+        response = stockstream.api.register_contest_player(registration_object)
+
+        page_model = {
+            "register_response": response
+        }
+
+        return render.pages.register_response(page_model)
+
+    def GET(self, url):
+
+        page_model = {
+        }
+
+        return render.pages.register(page_model)
 
 
 class Symbol:
@@ -196,13 +244,15 @@ class Player:
         player_profile = stockstream.positions.assemble_positions(positions)
         profile_stats = player_profile['profile_statistics']
         wallet = stockstream.api.get_wallet_for_user(scoped_username)
+        registration_status = stockstream.api.get_registration_status(scoped_username)
 
         page_model = {
             'positions': positions,
             'player_profile': player_profile,
             'profile_stats': profile_stats,
             'twitch_user': channel,
-            'wallet': wallet
+            'wallet': wallet,
+            'registration_status': registration_status
         }
 
         return render.pages.player(page_model)
@@ -290,9 +340,9 @@ class Index:
                 'portfolio_values': stockstream.api.get_portfolio_values(),
                 'portfolio_stats': stockstream.portfolio.compute_portfolio_statistics(),
                 'order_stats': stockstream.api.get_order_stats(),
-                'top_players_list': stockstream.players.get_top_players_list(),
                 'orders': stockstream.api.get_orders_today(),
-                'portfolio': stockstream.api.get_current_portfolio()
+                'portfolio': stockstream.api.get_current_portfolio(),
+                'ranked_scores': stockstream.scores.get_ranked_scores()
             }
 
         page = render.pages.index(page_model)

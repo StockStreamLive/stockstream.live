@@ -1,0 +1,71 @@
+$def with (model)
+
+$ status = model['register_response']['status']
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    $:render.elements.header()
+
+    <style>
+        .ok {
+            filter: drop-shadow(0px 0px 5px #00e700);
+        }
+
+        .description {
+            width: 60%;
+        }
+    </style>
+
+</head>
+
+<body>
+
+$:render.elements.navbar()
+
+<br>
+
+<center>
+
+    $if status == 'OK':
+        <h1 class="ok">Success!</h1>
+        <hr>
+        <div class="description">
+            You have successfully registered for the StockStream Challenge.
+            Now head over to the <a href="/contest">Contest Page</a> to learn how to play and win!
+        </div>
+
+    $if status == "ALREADY_REGISTERED":
+        <h1>Error</h1>
+        <hr>
+        <div class="description">
+            You have already registered for this competition.
+            You only need to register once, and only one registration is allowed per user.
+        </div>
+
+    $if status == "BAD_CAPTCHA":
+        <h1>Error</h1>
+        <hr>
+        <div class="description">
+             You entered the Captcha incorrectly. Please go back and try again.
+             If you have an adblocker enabled, please disable it temporarily.
+        </div>
+
+
+    $if status == "SERVER_ERROR":
+        <h1>Error</h1>
+        <hr>
+        <div class="description">
+             StockStream services were unable to record your registration.
+             Please try again later.
+        </div>
+
+    $:render.elements.footer()
+
+</center>
+
+</body>
+
+</html>

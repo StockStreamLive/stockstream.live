@@ -1,4 +1,4 @@
-$def with (title, positions)
+$def with (title, positions, registered_for_contest)
 
 $ tableId = scrub.id(title)
 $ tableBodyClass = scrub.id(title) + "Body"
@@ -42,8 +42,10 @@ $ tableBodyClass = scrub.id(title) + "Body"
             $ percent_change = position['percent_change']
             $ influence_percent = position['influence'] * 100
             $ liability = position['liability']
+            $ promo_qualified = position['promo_qualified']
+            $ row_class = 'promo_qualified' if promo_qualified and registered_for_contest else ''
 
-            <tr>
+            <tr class="$:row_class">
                 <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
                 <td class="timestamp">$:buy_time</td>
                 <td class="timestamp">$:sell_time</td>

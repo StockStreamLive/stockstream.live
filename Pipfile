@@ -18,6 +18,7 @@ pytz = "*"
 cherrypy = "*"
 gunicorn = "*"
 Markdown = "*"
+inflect = "*"
 
 [requires]
 python_version = "2.7"
