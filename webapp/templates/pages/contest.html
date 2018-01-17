@@ -38,30 +38,23 @@ $def with (model)
             margin-bottom: 25px;
         }
 
-        .go_button_label {
-            margin-top: 5px;
-        }
-
-        .go_button {
-            -webkit-appearance: button;
-            -moz-appearance: button;
-            appearance: button;
-
-            text-decoration: none;
-            color: initial;
-
-            text-align: center;
-
+        input[type="submit"] {
             width: 400px;
             height: 50px;
             font-family: 'Press Start 2P', cursive;
-            font-size: 1.9em;
+            font-size: 1.5vw;
             padding: 4px 4px;
             color: white;
             background-color: black;
             border: 1px solid magenta;
             cursor: pointer;
             transition: background-color .5s ease-out;
+        }
+
+        input[type="submit"]:hover {
+            border: 1px solid white;
+            color: black;
+            background: cyan;
         }
 
         .go_button:hover {
@@ -92,14 +85,15 @@ $def with (model)
         }
     </style>
 
+<meta content="text/html; charset=UTF-8" name="Content-Type" />
+
 <meta name="twitter:card" content="summary" />
 <meta name="twitter:site" content="@stockstream" />
 <meta name="twitter:creator" content="@stockstream" />
 
-<meta content="text/html; charset=UTF-8" name="Content-Type" />
-<meta property="twitter:card" content="image" />
-<meta property="twitter:title" content="StockStream is live!" />
-<meta property="twitter:description" content="Play StockStream and win Real Money!" />
+<meta property="og:url" content="https://stockstream.live/contest" />
+<meta property="og:title" content="World's first multiplayer stock market game using real money." />
+<meta property="og:description" content="Play StockStream and win Real Money!" />
 <meta property="og:image" content="/static/plaque-contest.png" />
 
 </head>
@@ -236,7 +230,9 @@ $:render.elements.navbar()
         The contest is free to enter and open to legal residents of The United States and some parts of Canada.
         Other restrictions apply, please read the full rules on the registration page for more details.
     </div>
-    <a class="go_button" href="/register"><span class="go_button_label">Register</span></a>
+    <form action="/register">
+        <input type="submit" value="Register" />
+    </form>
 
     <br>
     <br>
@@ -299,8 +295,9 @@ $:render.elements.navbar()
     <br>
 
     <h2>Ready to win some cash?</h2>
-
-    <a class="go_button" href="https://twitch.tv/stockstream"><span class="go_button_label">Let's do this!</span></a>
+    <form action="https://twitch.tv/stockstream">
+        <input type="submit" value="Let's do this!" />
+    </form>
 
     $:render.elements.footer()
 
