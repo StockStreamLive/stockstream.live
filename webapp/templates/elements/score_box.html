@@ -15,7 +15,7 @@ $if 'channel' in score:
 
     <div id="scoreBox" class="$:box_class rank$:rank">
         <center>
-            <img class="avatar $:image_class" src="$:score['channel']['logo']"/>
+            <a href="/player/twitch:$:score['channel']['name']"><img class="avatar $:image_class" src="$:score['channel']['logo']"/></a>
             <h3 class="$:username_class"><a class="score_name_link" href="/player/twitch:$:score['channel']['name']">$:score['channel']['display_name']</a></h3>
         </center>
 
