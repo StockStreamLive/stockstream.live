@@ -149,8 +149,10 @@ class Contest:
 
     def GET(self, url):
 
-        page_model = {
+        ranked_scores = stockstream.scores.get_ranked_scores()
 
+        page_model = {
+            'ranked_scores': ranked_scores
         }
 
         return render.pages.contest(page_model)

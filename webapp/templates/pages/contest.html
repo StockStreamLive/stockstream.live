@@ -1,5 +1,7 @@
 $def with (model)
 
+$ scores = model['ranked_scores']
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -83,6 +85,42 @@ $def with (model)
         ol {
             text-align: left;
         }
+
+        .avatar {
+            width: 125px;
+        }
+
+        #scoresContainer {
+            clear: both;
+        }
+
+        .score_name_link {
+            color: white;
+            text-decoration: none;
+        }
+
+        #scoreBox {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px;
+            font-size: .8em;
+        }
+
+        .active {
+            border: 1px solid #00e700;
+        }
+
+        .disabled {
+            border: 1px solid grey;
+        }
+
+        .desaturated {
+            -webkit-filter: grayscale(1);
+            -webkit-filter: grayscale(100%);
+            filter: gray;
+            filter: grayscale(100%);
+            border: 1px solid grey;
+        }
     </style>
 
 <meta content="text/html; charset=UTF-8" name="Content-Type" />
@@ -108,6 +146,16 @@ $:render.elements.navbar()
 
 <center>
 
+    <h1>Leaderboard</h1>
+
+    <hr>
+    <div id="scoresContainer">
+        $ max_scores = 5 if len(scores) > 5 else len(scores)
+        $for i in range(0, max_scores):
+            $:render.elements.score_box(scores[i], i+1)
+    </div>
+    <hr>
+
     <h1>Winning Real Money with StockStream</h1>
 
     <div class="contest_intro">
@@ -131,6 +179,13 @@ $:render.elements.navbar()
 
     <hr>
     <br>
+
+    <form action="/register">
+        <input type="submit" value="Register" />
+    </form>
+
+    <br>
+    <hr>
 
     <h1>Prizes</h1>
     <div class="contest_intro">
@@ -255,7 +310,7 @@ $:render.elements.navbar()
             to be eligible to win. Only stocks which cost more than $$5 will qualify.
         </div>
         Your open and closed positions can be found on your <span class="hilighted">profile page</span> and eligible positions will be
-        <span class="hilighted">hilighted</span>.
+        <span class="hilighted">highlighted</span>.
         Use the <span class="hilighted">#w</span> command in the chat to get a link to your page.
         <br>
         <br>

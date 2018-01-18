@@ -10,6 +10,25 @@ $ status = model['register_response']['status']
     $:render.elements.header()
 
     <style>
+        input[type="submit"] {
+            width: 400px;
+            height: 50px;
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1.5vw;
+            padding: 4px 4px;
+            color: white;
+            background-color: black;
+            border: 1px solid magenta;
+            cursor: pointer;
+            transition: background-color .5s ease-out;
+        }
+
+        input[type="submit"]:hover {
+            border: 1px solid white;
+            color: black;
+            background: cyan;
+        }
+
         .ok {
             filter: drop-shadow(0px 0px 5px #00e700);
         }
@@ -34,8 +53,15 @@ $:render.elements.navbar()
         <hr>
         <div class="description">
             You have successfully registered for the StockStream Challenge.
-            Now head over to the <a href="/contest">Contest Page</a> to learn how to play and win!
+            If you are new to StockStream you should read <a href="/contest">the tutorial</a>.
         </div>
+        <br>
+        <br>
+        <h2>Ready to win some cash?</h2>
+        <form action="https://twitch.tv/stockstream">
+            <input type="submit" value="Let's do this!" />
+        </form>
+
 
     $if status == "ALREADY_REGISTERED":
         <h1>Error</h1>
@@ -61,6 +87,8 @@ $:render.elements.navbar()
              StockStream services were unable to record your registration.
              Please try again later.
         </div>
+
+
 
     $:render.elements.footer()
 
