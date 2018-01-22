@@ -45,6 +45,7 @@ urls = (
     '/contest*(.+)', 'Contest',
     '/symbol/*(.+)', 'Symbol',
     '/portfolio*(.+)', 'Portfolio',
+    '/positions*(.+)', 'Positions',
     '/player/*(.+)', 'Player',
     '/dashboard*(.+)', 'Dashboard',
     '/charts*(.+)', 'Charts',
@@ -129,6 +130,7 @@ class Scores:
     def POST(self, url):
         raise web.seeother('/')
 
+    @cached()
     def GET(self, url):
 
         ranked_scores = stockstream.scores.get_ranked_scores()
@@ -227,6 +229,28 @@ class Symbol:
         }
 
         return render.pages.symbol(symbol, page_model)
+
+
+class Positions:
+    def __init__(self):
+        pass
+
+    def POST(self, url):
+        raise web.seeother('/')
+
+    @cached()
+    def GET(self, symbol):
+        symbol = symbol.upper()
+
+        positions = stockstream.api.get_open_positions()
+        positions_profile = stockstream.positions.assemble_positions(positions)
+
+        page_model = {
+            'positions': positions,
+            'positions_profile': positions_profile,
+        }
+
+        return render.pages.positions(page_model)
 
 
 class Player:
