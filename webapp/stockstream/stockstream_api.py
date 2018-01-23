@@ -125,6 +125,10 @@ def get_positions_by_date(date):
     return positions
 
 
+def get_open_positions():
+    return get_api_request("/v1/positions/open")
+
+
 def get_orders_today():
     today_str = time.strftime("%Y-%m-%d")
     return get_orders_by_date(today_str)

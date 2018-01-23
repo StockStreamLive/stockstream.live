@@ -1,0 +1,133 @@
+$def with (model)
+
+$ positions = model['positions_profile']
+$ positions_stats = positions['profile_statistics']
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+
+$:render.elements.header()
+
+<style>
+    #overview {
+        display: inline-block;
+    }
+
+    #fundamentals {
+        display: inline-block;
+    }
+
+    .timestamp {
+        white-space: nowrap;
+    }
+
+    .description {
+        width: 65%;
+        line-height: 1.3;
+    }
+
+    .price {
+        color: white;
+        font-size: 1.3em;
+    }
+
+    .wallet_order {
+        outline: 1px double white;
+        background-color: #2d2d2d;
+    }
+</style>
+
+<script>
+    jQuery(document).ready(
+        function() {
+            jQuery("#positions").tablesorter();
+            jQuery("#positions").trigger("update");
+            var table = jQuery('#positions');
+            table.floatThead();
+        }
+    );
+</script>
+
+</head>
+<body>
+
+$:render.elements.navbar()
+
+<center>
+
+    <h2>Open Positions</h2>
+
+    <table id="stats">
+        <tbody id="statsBody">
+        <tr>
+            <td>Cost</td>
+            <td>Value</td>
+            <td>Return $$</td>
+            <td>Return %</td>
+        </tr>
+        <tr>
+            <td><span>$:scrub.dollar_value(positions_stats['unrealized_buy_price'])</span></td>
+            <td><span>$:scrub.dollar_value(positions_stats['unrealized_sell_price'])</span></td>
+            <td><span class="$:('loss' if positions_stats['unrealized_return'] < 0 else 'profit')">$:scrub.dollar_change(positions_stats['unrealized_return'])</span></td>
+            <td><span class="$:('loss' if positions_stats['unrealized_percent_return'] < 0 else 'profit')">$:scrub.percent_change(positions_stats['unrealized_percent_return'])</span></td>
+        </tr>
+        </tbody>
+    </table>​
+
+
+    <table id="positions">
+        <thead>
+        <tr>
+            <th>Symbol</th>
+            <th>Buy Date</th>
+            <th>Buy Price</th>
+            <th>Quote</th>
+            <th>Return $$</th>
+            <th>Return %</th>
+            <th>Owners</th>
+        </tr>
+        </thead>
+        <tbody id="positionsTable">
+            $for position in positions['influenced_orders']['open']:
+                $ symbol = position['symbol']
+
+                $ buy_time = scrub.human_date(position['buy_time'])
+
+                $ recent_price = position['recent_price']
+                $ buy_price = position['buy_price']
+                $ difference = position['difference']
+                $ liability = position['liability']
+                $ percent_change = position['percent_change']
+                $ influence_percent = position['influence'] * 100
+
+                $ wallet_order = position['wallet_order']
+                $ row_class = 'wallet_order' if wallet_order else ''
+
+                <tr class="$:row_class">
+                    <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
+                    <td class="timestamp">$:buy_time</td>
+                    <td>$:scrub.dollar_value(buy_price)</td>
+                    <td>$:scrub.dollar_value(recent_price)</td>
+                    <td><span class="$:('loss' if difference < 0 else 'profit')">$:scrub.dollar_change(difference)</span></td>
+                    <td><span class="$:('loss' if percent_change < 0 else 'profit')">$:scrub.percent_change(percent_change)</span></td>
+                    <td>
+                        $for player in position['liable_players']:
+                            <span><a href="/player/$player">$player.split(":")[1]</a></span>
+                    </td>
+                </tr>
+        </tbody>
+    </table>
+
+
+    $:render.elements.footer()
+
+    <br>
+    <br>
+
+</center>
+
+</body>
+</html>
