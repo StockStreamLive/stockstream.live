@@ -4,6 +4,10 @@ import twitch_api
 
 def get_ranked_scores():
     ranked_scores = stockstream.api.get_ranked_scores()
+    return augment_ranked_scores(ranked_scores)
+
+
+def augment_ranked_scores(ranked_scores):
     scores_to_display = [score for score in ranked_scores if score['qualifiedTrades'] > 0]
     ranked_scores = scores_to_display
 
