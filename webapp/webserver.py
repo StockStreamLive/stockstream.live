@@ -16,6 +16,7 @@ import scrub
 from gunicorn.app.base import BaseApplication
 import twitch_api
 import config
+import httputil
 
 import gunicorn.app.base
 
@@ -46,6 +47,7 @@ urls = (
     '/symbol/*(.+)', 'Symbol',
     '/portfolio*(.+)', 'Portfolio',
     '/positions*(.+)', 'Positions',
+    '/winners*(.+)', 'Winners',
     '/player/*(.+)', 'Player',
     '/dashboard*(.+)', 'Dashboard',
     '/charts*(.+)', 'Charts',
@@ -140,6 +142,29 @@ class Scores:
         }
 
         return render.pages.scores(page_model)
+
+
+class Winners:
+    def __init__(self):
+        pass
+
+    def POST(self, url):
+        raise web.seeother('/')
+
+    @cached()
+    def GET(self, url):
+
+        winning_scores = httputil.get_json_object_from_url("https://s3.amazonaws.com/api.stockstream.live/winners.json")
+
+        scores = {
+            "week1": stockstream.scores.augment_ranked_scores(winning_scores['week1'])
+        }
+
+        page_model = {
+            'winning_scores': winning_scores
+        }
+
+        return render.pages.winners(page_model)
 
 
 class Contest:

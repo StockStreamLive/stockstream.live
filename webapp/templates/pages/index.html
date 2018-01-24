@@ -103,6 +103,16 @@ $:render.elements.header()
         transform: scale(1.2);
     }
 
+    #winnerslogo {
+        margin-top: 15px;
+        filter: drop-shadow(0px 0px 15px #00d097);
+    }
+
+    #winnerslogo:hover {
+        filter: drop-shadow(0px 0px 25px #00d097);
+        transform: scale(1.2);
+    }
+
     .scoreslink {
         font-size: 2em;
         color: black;
@@ -194,6 +204,17 @@ $:render.elements.navbar()
     </div>
 
     <div>
+        <br>
+        <br>
+        <br>
+
+        <a href="/winners" class="side_link"><img id="winnerslogo" class="follow" src="/static/plaque-winners.png"/></a>
+
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
 
         <a href="/info/help" class="side_link"><img id="helplogo" class="follow" src="/static/plaque-help.png"/></a>
         <a href="/referral" class="side_link"><img id="robinhoodlogo" class="follow" src="/static/plaque-robinhood.png"/></a>
