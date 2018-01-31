@@ -1,0 +1,12 @@
+$def with (winners)
+
+<div id="scoresContainer">
+    $for i in range(0, len(winners)):
+        <div class="winnerBox">
+            $:render.elements.score_box(winners[i], i+1)
+            <br>
+            Cash Prize <span class="profit">$:scrub.dollar_value(winners[i]['cashPrize'])</span>
+            <br>
+            Drawings <span class="profit">$:winners[i]['entries']</span>
+        </div>
+</div>
