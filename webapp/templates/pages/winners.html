@@ -1,6 +1,7 @@
 $def with (model)
 
 $ winning_scores = model['winning_scores']
+$ valid_weeks = model['winning_scores']
 
 <!DOCTYPE html>
 <html lang="en">
@@ -90,7 +91,7 @@ $ winning_scores = model['winning_scores']
             width: 125px;
         }
 
-        #scoresContainer {
+        .scoresContainer {
             clear: both;
         }
 
@@ -159,22 +160,18 @@ $:render.elements.navbar()
     <br>
     <br>
 
-    <h1>Weekly Channel I Winners</h1>
+    <h1>Weekly Challenge Winners</h1>
 
+    <br>
     <hr>
-    <div id="scoresContainer">
-        $if 'week1' in winning_scores:
-            $for i in range(0, len(winning_scores['week1'])):
-                <div class="winnerBox">
-                    $:render.elements.score_box(winning_scores['week1'][i], i+1)
-                    <br>
-                    Cash Prize <span class="profit">$:scrub.dollar_value(winning_scores['week1'][i]['cashPrize'])</span>
-                    <br>
-                    Drawings <span class="profit">$:winning_scores['week1'][i]['entries']</span>
-                </div>
-    </div>
+    <br>
 
-    <hr>
+    $for week in valid_weeks:
+        <div class="scoresContainer">
+            $if week in winning_scores:
+                $:render.elements.winner_list(winning_scores[week])
+        </div>
+        <br><hr><br>
 
     <br>
     <br>

@@ -156,12 +156,19 @@ class Winners:
 
         winning_scores = httputil.get_json_object_from_url("https://s3.amazonaws.com/api.stockstream.live/winners.json")
 
+        weeks = ["week" + str(i) for i in range(1, 7)]
+
+        valid_weeks = []
         scores = {
-            "week1": stockstream.scores.augment_ranked_scores(winning_scores['week1'])
         }
+        for week in weeks:
+            if week in winning_scores:
+                scores[week] = stockstream.scores.augment_ranked_scores(winning_scores[week])
+                valid_weeks.append(week)
 
         page_model = {
-            'winning_scores': winning_scores
+            'winning_scores': winning_scores,
+            'valid_weeks': valid_weeks
         }
 
         return render.pages.winners(page_model)
