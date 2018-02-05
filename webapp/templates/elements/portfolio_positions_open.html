@@ -1,21 +1,7 @@
 $def with (title, positions, show_wallets)
 
-$ tableId = scrub.id(title)
-$ tableBodyClass = scrub.id(title) + "Body"
-
-<script>
-    jQuery(document).ready(
-        function() {
-            jQuery("#$:tableId").tablesorter();
-            jQuery("#$:tableId").trigger("update");
-            var table = jQuery('#$:tableId');
-            table.floatThead();
-        }
-    );
-</script>
-
 <h2>$:title</h2>
-<table id="$:tableId">
+<table>
     <thead>
     <tr>
         <th>Buy Date</th>
@@ -26,7 +12,7 @@ $ tableBodyClass = scrub.id(title) + "Body"
         <th>Owners</th>
     </tr>
     </thead>
-    <tbody id="$:tableBodyClass">
+    <tbody>
         $for position in positions:
             $ symbol = position['symbol']
 

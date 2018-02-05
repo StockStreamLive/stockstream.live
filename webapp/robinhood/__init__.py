@@ -1,3 +1,2 @@
-import robinhood_api as api
-import quote as quote
-import referral as referral
+from . import robinhood_api as api
+from . import quote

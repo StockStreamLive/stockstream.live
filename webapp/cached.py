@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
+from css_html_js_minify import html_minify
 import os
-import thread
+import threading
 import redis
 import web
 
@@ -15,11 +16,13 @@ class cached(object):
     def __refresh_function_param(self, func, path, async, *args, **kwargs):
         def do_refresh():
             res = func(*args, **kwargs)
-            redis_client.set(path, str(res))
+            page = str(res)
+            page = html_minify(page)
+            redis_client.set(path, page)
             self.path_cache_time[path] = datetime.now()
 
         if async:
-            thread.start_new_thread(do_refresh, ())
+            threading.Thread(target=do_refresh).start()
         else:
             do_refresh()
 

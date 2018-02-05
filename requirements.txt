@@ -2,8 +2,7 @@ boto
 bleach
 bs4
 boto3
-web.py
-functools32
+web.py==0.40.dev0
 pyOpenSSL
 requests
 python-twitch-client
@@ -15,3 +14,4 @@ gunicorn
 Markdown
 redis
 inflect
+css-html-js-minify

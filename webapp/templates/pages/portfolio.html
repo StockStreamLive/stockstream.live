@@ -25,8 +25,21 @@ $:render.elements.header()
         display: inline;
     }
 
-    .assets {
+    .symbol_row {
+        cursor: pointer;
 
+    }
+
+    .detail_row:hover {
+        background: black;
+    }
+
+    .detail_td {
+        padding: 0px;
+    }
+
+    .detail_container {
+        display: none;
     }
 
     #portfolio_container {
@@ -48,6 +61,17 @@ $:render.elements.header()
             table.floatThead();
         }
     );
+
+    jQuery(function() {
+        jQuery("td[colspan=11]").find(".detail_container").hide();
+        jQuery("#assets").click(function(event) {
+            event.stopPropagation();
+            var target = jQuery(event.target);
+            if ( !(target.closest("td").attr("colspan") > 1) ) {
+                target.closest("tr").next().find(".detail_container").slideToggle('fast');
+            }
+        });
+    });
 </script>
 
 </head>
@@ -127,6 +151,11 @@ $:render.elements.navbar()
                     $ recent_price = asset_stat['recent_price']
                     $ shares = asset_stat['shares']
 
+                    $ position_stats = asset_stat['position_stats']
+                    $ open_positions = position_stats['influenced_orders']['open']
+                    $ public_positions = [position for position in open_positions if not position['wallet_order']]
+                    $ wallet_positions = [position for position in open_positions if position['wallet_order']]
+
                     $ dollar_change = asset_stat['dollar_change']
                     $ percent_change = asset_stat['percent_change']
 
@@ -136,18 +165,32 @@ $:render.elements.navbar()
 
                     $ percent_portfolio = asset_stat['weight']
                     $ percent_change_today = asset_stat['percent_change_today']
-                    <tr>
-                    <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
-                    <td>$:shares</td>
-                    <td>$:scrub.dollar_value(avg_cost)</td>
-                    <td>$:scrub.dollar_value(recent_price)</td>
-                    <td><span class="$:('loss' if dollar_change < 0 else 'profit')">$:scrub.dollar_change(dollar_change)</span></td>
-                    <td><span class="$:('loss' if percent_change < 0 else 'profit')">$:scrub.percent_change(percent_change)</span></td>
-                    <td>$:scrub.dollar_value(total_cost)</td>
-                    <td>$:scrub.dollar_value(total_value)</td>
-                    <td><span class="$:('loss' if total_dollar_return < 0 else 'profit')">$:scrub.dollar_change(total_dollar_return)</span></td>
-                    <td>$:scrub.percent_value(percent_portfolio)</td>
-                    <td><span class="$:('loss' if percent_change_today < 0 else 'profit')">$:scrub.percent_change(percent_change_today)</span></td>
+                    <tr class="symbol_row">
+                        <td class="symbol"><a href="/symbol/$:symbol">$:symbol</a></td>
+                        <td>$:shares</td>
+                        <td>$:scrub.dollar_value(avg_cost)</td>
+                        <td>$:scrub.dollar_value(recent_price)</td>
+                        <td><span class="$:('loss' if dollar_change < 0 else 'profit')">$:scrub.dollar_change(dollar_change)</span></td>
+                        <td><span class="$:('loss' if percent_change < 0 else 'profit')">$:scrub.percent_change(percent_change)</span></td>
+                        <td>$:scrub.dollar_value(total_cost)</td>
+                        <td>$:scrub.dollar_value(total_value)</td>
+                        <td><span class="$:('loss' if total_dollar_return < 0 else 'profit')">$:scrub.dollar_change(total_dollar_return)</span></td>
+                        <td>$:scrub.percent_value(percent_portfolio)</td>
+                        <td><span class="$:('loss' if percent_change_today < 0 else 'profit')">$:scrub.percent_change(percent_change_today)</span></td>
+                    </tr>
+                    <tr class="tablesorter-childRow detail_row">
+                        <td colspan="11" class="detail_td">
+                            <center>
+                                <div class="detail_container">
+                                    $if len(public_positions) > 0:
+                                        $:render.elements.portfolio_positions_open("Public Positions", public_positions, False)
+                                        <hr>
+                                    $if len(wallet_positions) > 0:
+                                        $:render.elements.portfolio_positions_open("Wallet Positions", wallet_positions, True)
+                                        <hr>
+                                </div>
+                            </center>
+                        </td>
                     </tr>
             </tbody>
         </table>​

@@ -29,7 +29,7 @@ def human_format(num):
     if num is None:
         return "-"
 
-    if isinstance(num, basestring):
+    if isinstance(num, str):
         num = float(num)
 
     magnitude = 0
@@ -43,7 +43,7 @@ def decimal_value(num):
     if num is None:
         return "-"
 
-    if isinstance(num, basestring):
+    if isinstance(num, str):
         num = float(num)
 
     return "{:.2f}".format(num)
@@ -53,7 +53,7 @@ def dollar_value(num):
     if num is None:
         return "-"
 
-    if isinstance(num, basestring):
+    if isinstance(num, str):
         num = float(num)
 
     return "$" + "{:,.2f}".format(abs(num))
