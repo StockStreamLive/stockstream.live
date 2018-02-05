@@ -76,6 +76,7 @@ a:hover {
 
 table {
     border-collapse: collapse;
+    border-spacing: 0px;
 }
 
 table td{
@@ -83,7 +84,7 @@ table td{
     padding: 4px;
     text-align: center;
     line-height: 1.4;
-    font-size: 1em;
+    font-size: .9em;
 }
 
 table tr:hover {

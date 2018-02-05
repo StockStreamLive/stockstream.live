@@ -130,7 +130,12 @@ $:render.elements.navbar()
 
     <br>
 
-    $:render.elements.symbol_positions_open("Open Positions", symbol_profile['influenced_orders']['open'])
+
+    $:render.elements.symbol_positions_open("Wallet Positions", symbol_profile['influenced_orders']['open'], True)
+
+    <hr>
+
+    $:render.elements.symbol_positions_open("Open Positions", symbol_profile['influenced_orders']['open'], False)
 
     <hr>
 

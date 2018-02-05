@@ -94,6 +94,11 @@ def assemble_positions(positions):
 
     symbol_to_quote = robinhood.api.get_symbol_to_quotes(symbols)
 
+    return assemble_positions_with_quotes(positions, symbol_to_quote)
+
+
+def assemble_positions_with_quotes(positions, symbol_to_quote):
+
     influenced_orders = stockstream.positions.organize_positions(positions, symbol_to_quote)
     profile_statistics = stockstream.positions.get_profile_statistics(influenced_orders)
 

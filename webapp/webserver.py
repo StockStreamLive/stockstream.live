@@ -7,7 +7,7 @@ import web
 import markdown
 from cached import cached
 
-from urllib import unquote
+from urllib.parse import unquote
 import posixpath
 import stockstream
 import tradingview_api
@@ -237,13 +237,13 @@ class Symbol:
         instrument = robinhood.api.get_instrument_for_symbol(symbol)
         portfolio = stockstream.api.get_current_portfolio()
         positions = stockstream.api.get_positions_by_symbol(symbol)
-        asset_map = stockstream.portfolio.get_symbol_to_asset(portfolio)
-        portfolio_value = stockstream.portfolio.compute_value(portfolio)
-        quote = robinhood.api.get_quote(symbol)
+        asset_map = stockstream.portfolio.get_symbol_to_asset()
+        portfolio_stats = stockstream.portfolio.compute_portfolio_statistics()
+        quote_map = robinhood.api.get_symbol_to_quotes([symbol])
 
         asset_stats = {}
         if symbol in asset_map:
-            asset_stats = stockstream.portfolio.compute_asset_stats(asset_map[symbol], portfolio_value, quote)
+            asset_stats = stockstream.portfolio.compute_asset_stats(asset_map[symbol], portfolio_stats['total_value'], quote_map)
 
         page_model = {
             'orders': stockstream.api.get_orders_by_symbol(symbol),
@@ -333,6 +333,7 @@ class Portfolio:
             rows = []
             for symbol in portfolio_stats['asset_stats']:
                 stats = portfolio_stats['asset_stats'][symbol]
+                del stats['position_stats']
                 if len(rows) == 0:
                     rows.append(",".join(stats.keys()))
                 rows.append(",".join(str(value) for value in stats.values()))
@@ -467,6 +468,7 @@ if __name__ == '__main__':
 
     options = {
         'bind': '%s:%s' % ('0.0.0.0', port),
+        'timeout': 300,
         'workers': os.environ['WORKERS'],
     }
     StandaloneApplication(wsgi, options).run()

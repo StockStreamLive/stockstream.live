@@ -15,7 +15,7 @@ def get_symbol_to_quotes(symbols):
                 symbol_to_quote[quote['symbol']] = quote
     except Exception as e:
         traceback.print_exc()
-        print "ERROR: " + `e`
+        print("ERROR: " + str(e))
     return symbol_to_quote
 
 
